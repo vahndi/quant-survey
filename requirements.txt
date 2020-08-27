@@ -1,0 +1,10 @@
+matplotlib
+mpl-format
+nltk
+numpy
+pandas
+probability
+seaborn
+scikit-learn
+tqdm
+wordcloud

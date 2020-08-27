@@ -1,0 +1,2 @@
+class TextualMixin(object):
+    pass
