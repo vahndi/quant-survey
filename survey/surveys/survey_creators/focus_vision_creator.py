@@ -256,7 +256,7 @@ class FocusVisionCreator(SurveyCreator):
         # set index of respondent id
         new_survey_data = concat(new_columns, axis=1)
         new_survey_data.index = self.survey_data['record: Record number']
-        new_survey_data.index.name = 'Response ID'
+        new_survey_data.index.name = 'Respondent ID'
 
         self.survey_data = new_survey_data
 

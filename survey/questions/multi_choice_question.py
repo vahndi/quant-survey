@@ -56,7 +56,8 @@ class MultiChoiceQuestion(
         errors = []
         for unique_val in unique:
             if unique_val not in self._categories:
-                errors.append(f'"{unique_val}" is not in categories.')
+                errors.append(f'"{unique_val}" is not in categories'
+                              f' for question "{self.text}".')
         if errors:
             raise ValueError('\n'.join(errors))
 

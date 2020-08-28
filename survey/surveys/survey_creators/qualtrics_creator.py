@@ -34,6 +34,11 @@ class QualtricsCreator(SurveyCreator):
             )
         match_cols = [c for c in self.survey_data.columns
                       if match(question_metadata.expression, c)]
+        if len(match_cols) == 0:
+            raise ValueError(
+                f'Could not match expression "{question_metadata.expression}" '
+                f'for MultiChoice question "{question_metadata}"'
+            )
         return self.survey_data[match_cols].apply(
             lambda row: CATEGORY_SPLITTER.join(row.dropna().astype(str)), axis=1
         )
@@ -82,6 +87,6 @@ class QualtricsCreator(SurveyCreator):
                 new_survey_data[qmd.text] = self._get_ranked_choice_data(qmd)
 
         # set index of respondent id
-        new_survey_data.index = self.survey_data['Response ID']
+        new_survey_data.index = self.survey_data['Respondent ID']
 
         self.survey_data = new_survey_data
