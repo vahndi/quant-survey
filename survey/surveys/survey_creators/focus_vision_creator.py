@@ -7,14 +7,21 @@ from numpy import nan
 from pandas import read_excel, DataFrame, Series, ExcelFile, concat, notnull, isnull
 
 from survey import Survey
-from survey.groups.question_groups.count_question_group import CountQuestionGroup
-from survey.groups.question_groups.free_text_question_group import FreeTextQuestionGroup
-from survey.groups.question_groups.likert_question_group import LikertQuestionGroup
-from survey.groups.question_groups.multi_choice_question_group import MultiChoiceQuestionGroup
-from survey.groups.question_groups.positive_measure_question_group import PositiveMeasureQuestionGroup
+from survey.groups.question_groups.count_question_group import \
+    CountQuestionGroup
+from survey.groups.question_groups.free_text_question_group import \
+    FreeTextQuestionGroup
+from survey.groups.question_groups.likert_question_group import \
+    LikertQuestionGroup
+from survey.groups.question_groups.multi_choice_question_group import \
+    MultiChoiceQuestionGroup
+from survey.groups.question_groups.positive_measure_question_group import \
+    PositiveMeasureQuestionGroup
 from survey.groups.question_groups.question_group import QuestionGroup
-from survey.groups.question_groups.ranked_choice_question_group import RankedChoiceQuestionGroup
-from survey.groups.question_groups.single_choice_question_group import SingleChoiceQuestionGroup
+from survey.groups.question_groups.ranked_choice_question_group import \
+    RankedChoiceQuestionGroup
+from survey.groups.question_groups.single_choice_question_group import \
+    SingleChoiceQuestionGroup
 from survey.surveys.metadata.question_metadata import QuestionMetadata
 from survey.surveys.survey_creators.base.survey_creator import SurveyCreator
 
@@ -24,7 +31,8 @@ class FocusVisionCreator(SurveyCreator):
     def read_survey_data(self):
 
         data = read_excel(self.survey_data_fn)
-        data.columns = [column.replace(u'\xa0', u' ') for column in data.columns]
+        data.columns = [column.replace(u'\xa0', u' ')
+                        for column in data.columns]
         if self.pre_clean is not None:
             data = self.pre_clean(data)
         self.survey_data = data
@@ -51,7 +59,8 @@ class FocusVisionCreator(SurveyCreator):
 
         new_metadata_dicts: List[dict] = []
         expressions: DataFrame = self.loop_expressions.loc[
-            self.loop_expressions['loop_name'] == metadata_dict['loop_variables'], :
+            self.loop_expressions['loop_name'] ==
+            metadata_dict['loop_variables'], :
         ]
         loop_variables: List[str] = metadata_dict['loop_variables'].split('\n')
         # build lists of loop variable values
@@ -60,25 +69,35 @@ class FocusVisionCreator(SurveyCreator):
             loop_froms.append(self._loop_variable_froms(loop_variable))
         # iterate over potential matching expressions
         for _, expression_data in expressions.iterrows():
-            # iterate over product of loop variable values and check for matching column(s)
+            # iterate over product of loop variable values and check for
+            # matching column(s)
             for loop_vals in product(*loop_froms):
                 # create a new expression using the loop variable values
                 loop_expression = expression_data['expression_builder']
                 for l, loop_val in enumerate(loop_vals):
-                    loop_expression = loop_expression.replace('{{' + loop_variables[l] + '}}', str(loop_val))
-                # find columns matching the question expression and loop expression
+                    loop_expression = loop_expression.replace(
+                        '{{' + loop_variables[l] + '}}', str(loop_val)
+                    )
+                # find columns matching the question expression and
+                # loop expression
                 match_cols = [column for column in self.survey_data.columns
-                              if match(loop_expression, column) and match(metadata_dict['expression'], column)]
+                              if match(loop_expression, column)
+                              and match(metadata_dict['expression'], column)]
                 if len(match_cols) > 0:
                     # create new metadata dict
                     new_metadata = {k: v for k, v in metadata_dict.items()}
-                    # build list of loop variable values to sub into question / attribute name
+                    # build list of loop variable values to sub into question /
+                    # attribute name
                     var_vals: List[str] = []
                     for loop_variable, loop_val in zip(loop_variables, loop_vals):
-                        loop_var_mappings = self._loop_variable_mappings(loop_variable)
+                        loop_var_mappings = self._loop_variable_mappings(
+                            loop_variable
+                        )
                         var_vals.append(loop_var_mappings.loc[loop_val])
                     # create new name for metadata based on loop values
-                    new_metadata['name'] = new_metadata['name'] + '__' + '__'.join(var_vals)
+                    new_metadata['name'] = (
+                            new_metadata['name'] + '__' + '__'.join(var_vals)
+                    )
                     # assign loop expression to match columns against
                     new_metadata['loop_expression'] = loop_expression
                     new_metadata_dicts.append(new_metadata)
@@ -101,7 +120,7 @@ class FocusVisionCreator(SurveyCreator):
             questions_metadata = self._filter_to_survey(questions_metadata)
             attributes_metadata = self._filter_to_survey(attributes_metadata)
             orders_metadata = self._filter_to_survey(orders_metadata)
-        # check for clashes in question names, attribute names and category names
+        # check for clashes in question, attribute and category names
         category_names = sorted(orders_metadata['category'].unique())
         q_name_errors = []
         for q_name in sorted(questions_metadata['name'].unique()):
@@ -128,7 +147,9 @@ class FocusVisionCreator(SurveyCreator):
                 if notnull(row['categories']):
                     q_name = row['name']
                     order_value = row['categories']
-                    ordered_choices = orders_metadata[orders_metadata['category'] == order_value].copy()
+                    ordered_choices = orders_metadata[
+                        orders_metadata['category'] == order_value
+                        ].copy()
                     ordered_choices['category'] = q_name
                     orders_metadata = concat([orders_metadata, ordered_choices])
         # create looped questions
@@ -142,9 +163,13 @@ class FocusVisionCreator(SurveyCreator):
                     for new_metadata in new_metadatas:
                         q_name = new_metadata['name']
                         order_value = row['categories']
-                        ordered_choices = orders_metadata[orders_metadata['category'] == order_value].copy()
+                        ordered_choices = orders_metadata[
+                            orders_metadata['category'] == order_value
+                            ].copy()
                         ordered_choices['category'] = q_name
-                        orders_metadata = concat([orders_metadata, ordered_choices])
+                        orders_metadata = concat([
+                            orders_metadata, ordered_choices
+                        ])
                 else:
                     questions_metadata_items.append(metadata_dict)
             questions_metadata = DataFrame(questions_metadata_items)
@@ -153,7 +178,9 @@ class FocusVisionCreator(SurveyCreator):
         self.attributes_metadata = attributes_metadata
         self.orders_metadata = orders_metadata
 
-    def _clean_single_column_data(self, question_metadata: QuestionMetadata) -> Series:
+    def _get_single_column_data(
+            self, question_metadata: QuestionMetadata
+    ) -> Series:
 
         if question_metadata.expression is None:
             return self.survey_data[question_metadata.text]
@@ -175,7 +202,9 @@ class FocusVisionCreator(SurveyCreator):
             data = data.rename(question_metadata.name)
             return data
 
-    def _clean_multi_choice_data(self, question_metadata: QuestionMetadata) -> Series:
+    def _get_multi_choice_data(
+            self, question_metadata: QuestionMetadata
+    ) -> Series:
 
         # merge multi-choice questions to single column
         if question_metadata.expression is None:
@@ -200,7 +229,9 @@ class FocusVisionCreator(SurveyCreator):
 
         null_rows = choices.notnull().sum(axis=1) == 0
         data = Series(data=nan, index=choices.index)
-        data.loc[~null_rows] = choices.loc[~null_rows].apply(create_cell_data, axis=1)
+        data.loc[~null_rows] = choices.loc[~null_rows].apply(
+            create_cell_data, axis=1
+        )
 
         return Series(data=data, name=question_metadata.name)
 
@@ -210,13 +241,13 @@ class FocusVisionCreator(SurveyCreator):
 
         # copy attribute columns to new dataframe
         for amd in self.attribute_metadatas:
-            new_columns.append(self._clean_single_column_data(amd))
+            new_columns.append(self._get_single_column_data(amd))
 
         for qmd in self.question_metadatas:
             if qmd.type_name not in ('MultiChoice', 'RankedChoice'):
-                new_columns.append(self._clean_single_column_data(qmd))
+                new_columns.append(self._get_single_column_data(qmd))
             elif qmd.type_name == 'MultiChoice':
-                new_columns.append(self._clean_multi_choice_data(qmd))
+                new_columns.append(self._get_multi_choice_data(qmd))
             elif qmd.type_name == 'RankedChoice':
                 raise NotImplementedError(
                     'No implementation for FocusVision RankedChoice Questions'
@@ -259,8 +290,10 @@ class FocusVisionCreator(SurveyCreator):
                 var_1 = loop_variables[0]
                 # constructor =
                 group = group_constructor({
-                    loop_value: [q for q in self.questions
-                                 if q.name == f"{question_metadata['name']}__{loop_value}"][0]
+                    loop_value: [
+                        q for q in self.questions
+                        if q.name == f"{question_metadata['name']}"
+                                     f"__{loop_value}"][0]
                     for loop_value in loop_names_values[var_1]
                 })
                 groups[question_metadata['name']] = group
@@ -272,27 +305,39 @@ class FocusVisionCreator(SurveyCreator):
                     for val_2 in loop_names_values[var_2]:
                         inner_group_questions[val_2] = [
                             q for q in self.questions
-                            if q.name == f"{question_metadata['name']}__{val_1}__{val_2}"
+                            if q.name == f"{question_metadata['name']}"
+                                         f"__{val_1}__{val_2}"
                         ][0]
-                    outer_group_groups[val_1] = group_constructor(inner_group_questions)
+                    outer_group_groups[val_1] = group_constructor(
+                        inner_group_questions
+                    )
                 for val_2 in loop_names_values[var_2]:
                     inner_group_questions = {}
                     for val_1 in loop_names_values[var_1]:
                         inner_group_questions[val_1] = [
                             q for q in self.questions
-                            if q.name == f"{question_metadata['name']}__{val_1}__{val_2}"
+                            if q.name == f"{question_metadata['name']}" \
+                                         f"__{val_1}__{val_2}"
                         ][0]
-                    outer_group_groups[val_2] = group_constructor(inner_group_questions)
-                groups[question_metadata['name']] = QuestionGroup(outer_group_groups)
+                    outer_group_groups[val_2] = group_constructor(
+                        inner_group_questions
+                    )
+                groups[question_metadata['name']] = QuestionGroup(
+                    outer_group_groups
+                )
             else:
-                print("Warning - can't set dynamic group for nested loops with more than 2 loop variables.")
+                print("Warning - can't set dynamic group for nested loops with"
+                      " more than 2 loop variables.")
         return groups
 
     def create_survey(self):
 
         groups = self._create_groups()
         self.survey = Survey(
-            name=self.survey_name, data=self.survey_data, questions=self.questions,
-            respondents=self.respondents, items=self.respondent_attributes,
+            name=self.survey_name,
+            data=self.survey_data,
+            questions=self.questions,
+            respondents=self.respondents,
+            items=self.respondent_attributes,
             groups=groups
         )

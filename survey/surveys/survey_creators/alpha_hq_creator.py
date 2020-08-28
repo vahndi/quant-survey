@@ -9,8 +9,8 @@ from survey.surveys.survey_creators.base.survey_creator import SurveyCreator
 
 class AlphaHQCreator(SurveyCreator):
 
-    def _clean_multi_category_data(self, question_metadata: QuestionMetadata,
-                                   categories: List[str]) -> Series:
+    def _get_multi_category_data(self, question_metadata: QuestionMetadata,
+                                 categories: List[str]) -> Series:
 
         def get_selected(item: str):
             if isnull(item):
@@ -42,7 +42,7 @@ class AlphaHQCreator(SurveyCreator):
         # copy (and rename) question columns to new dataframe
         for qmd in self.question_metadatas:
             if qmd.type_name not in ('MultiChoice', 'RankedChoice'):
-                new_survey_data[qmd.text] = self._clean_single_column_data(qmd)
+                new_survey_data[qmd.text] = self._get_single_column_data(qmd)
             else:
                 categories = self.orders_metadata.loc[
                     self.orders_metadata['category'] == qmd.name, 'value'
@@ -52,7 +52,7 @@ class AlphaHQCreator(SurveyCreator):
                         f'Error: Orders Metadata does not contain any values '
                         f'for "{qmd.name}".'
                     )
-                new_survey_data[qmd.text] = self._clean_multi_category_data(
+                new_survey_data[qmd.text] = self._get_multi_category_data(
                     question_metadata=qmd, categories=categories
                 )
 

@@ -32,6 +32,7 @@ class SurveyCreator(object):
                  survey_id: Optional = None,
                  pre_clean: Optional[Callable[[DataFrame], DataFrame]] = None):
         """
+        Create a new SurveyCreator.
 
         :param survey_name: Name for the survey.
         :param survey_data_fn: Path to the survey raw data file.
@@ -41,6 +42,8 @@ class SurveyCreator(object):
         :param survey_id: Optional value that identifies the survey in the
                           metadata file.
         :param pre_clean: Optional method to run on the raw data file on read.
+                          Used if there are some values in this specific raw
+                          data file that need changing in some way.
         """
         # now
         self.survey_name: str = survey_name
@@ -74,7 +77,9 @@ class SurveyCreator(object):
         self.questions_metadata_original: Optional[DataFrame] = None
 
     def run(self) -> Survey:
-
+        """
+        Run all the steps to create the Survey object.
+        """
         self.read_survey_data()
         self.read_metadata()
         self.validate_metadata()
@@ -86,14 +91,19 @@ class SurveyCreator(object):
         return self.survey
 
     def read_survey_data(self):
-
+        """
+        Read the raw survey data file and do any custom pre-cleaning.
+        """
         data = read_csv(self.survey_data_fn)
         if self.pre_clean is not None:
             data = self.pre_clean(data)
         self.survey_data = data
 
     def _filter_to_survey(self, metadata: DataFrame) -> DataFrame:
-
+        """
+        Filter the given metadata to only contain metadata for the current
+        survey.
+        """
         if self.survey_id_col in metadata.columns:
             metadata = metadata.loc[
                 (metadata[self.survey_id_col] == self.survey_id) |
@@ -102,7 +112,10 @@ class SurveyCreator(object):
         return metadata
 
     def read_metadata(self):
-
+        """
+        Read the question, attribute and order metadata from the Excel
+        metadata file.
+        """
         metadata = ExcelFile(self.metadata_fn)
         # read metadata
         questions_metadata = read_excel(metadata, 'questions')
@@ -133,7 +146,6 @@ class SurveyCreator(object):
                 f'The following categories clash with attribute names. '
                 f'Rename attributes or categories.\n{a_name_errors}'
             )
-        # check each order listed in question and attribute categories exists
         # create ordered choices for questions with shared choices
         for meta in (attributes_metadata, questions_metadata):
             for idx, row in meta.iterrows():
@@ -153,8 +165,9 @@ class SurveyCreator(object):
         self.orders_metadata = orders_metadata
 
     def validate_metadata(self):
-
-        # validate categories
+        """
+        Check each order listed in question and attribute categories exists.
+        """
         question_category_groups = (
             self.questions_metadata['categories'].dropna().unique()
         )
@@ -179,7 +192,9 @@ class SurveyCreator(object):
             )
 
     def convert_metadata_to_objects(self):
-
+        """
+        Convert DataFrames of metadata to lists of Metadata objects.
+        """
         self.attribute_metadatas = AttributeMetadata.from_dataframe(
             self.attributes_metadata
         )
@@ -187,11 +202,13 @@ class SurveyCreator(object):
             self.questions_metadata
         )
 
-    def _clean_single_column_data(
+    def _get_single_column_data(
             self,
             question_metadata: QuestionMetadata
     ) -> Series:
-
+        """
+        Find a single column using the QuestionMetadata and return as a Series.
+        """
         if question_metadata.expression is None:
             return self.survey_data[question_metadata.text]
         else:
@@ -208,7 +225,10 @@ class SurveyCreator(object):
             return self.survey_data[match_col]
 
     def clean_survey_data(self):
-
+        """
+        Extract the data from the survey data file using the validated
+        Metadata objects
+        """
         survey_data = self.survey_data
         new_survey_data = DataFrame()
 
@@ -218,12 +238,14 @@ class SurveyCreator(object):
 
         # copy (and rename) question columns to new dataframe
         for qmd in self.question_metadatas:
-            new_survey_data[qmd.text] = self._clean_single_column_data(qmd)
+            new_survey_data[qmd.text] = self._get_single_column_data(qmd)
 
         self.survey_data = new_survey_data
 
     def format_survey_data(self):
-
+        """
+        Rename columns from question and attribute text to python name.
+        """
         survey_data = self.survey_data
         survey_data = survey_data.rename(
             columns=AttributeMetadata.text_to_name(self.attribute_metadatas)
@@ -236,15 +258,13 @@ class SurveyCreator(object):
     # region creation
 
     @staticmethod
-    def _split_func(choices: str) -> List[str]:
-        return [c.strip() for c in choices.split('; ')]
-
-    @staticmethod
     def _create_questions(
             questions_meta: List[QuestionMetadata],
             survey_data: DataFrame, orders_meta: DataFrame
     ) -> List[Question]:
-
+        """
+        Create the SurveyQuestion objects.
+        """
         questions: List[Question] = []
         prev_qname = ''
         for q_meta in questions_meta:
@@ -321,7 +341,9 @@ class SurveyCreator(object):
             attributes_meta: List[AttributeMetadata],
             survey_data: DataFrame, orders_meta: DataFrame
     ) -> List[RespondentAttribute]:
-
+        """
+        Create the RespondentAttribute objects.
+        """
         respondent_attributes = []
         for a_meta in attributes_meta:
             if a_meta.type_name in ('SingleCategory',
@@ -355,7 +377,9 @@ class SurveyCreator(object):
             survey_data: DataFrame,
             attributes_meta: List[AttributeMetadata]
     ) -> List[Respondent]:
-
+        """
+        Create the Respondent attributes.
+        """
         respondents = []
         for ix, row in survey_data.iterrows():
             respondent_attrs = row.reindex([
@@ -370,7 +394,9 @@ class SurveyCreator(object):
     # end region
 
     def create_survey_components(self):
-
+        """
+        Create the Question, RespondentAttribute and Respondent objects.
+        """
         self.questions = self._create_questions(
             questions_meta=self.question_metadatas,
             survey_data=self.survey_data,
@@ -387,7 +413,10 @@ class SurveyCreator(object):
         )
 
     def create_survey(self):
-
+        """
+        Create the Survey from the previously created Questions, Attributes and
+        Respondents, and the cleaned data.
+        """
         self.survey = Survey(
             name=self.survey_name,
             data=self.survey_data,
