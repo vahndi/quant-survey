@@ -1,4 +1,5 @@
-from pandas import DataFrame, read_excel, ExcelFile, read_csv, concat, Series, notnull
+from pandas import DataFrame, read_excel, ExcelFile, read_csv, concat, Series, \
+    notnull
 from pathlib import Path
 from re import match
 from typing import Optional, List, Union, Callable
@@ -9,36 +10,48 @@ from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.attributes import RespondentAttribute, SingleCategoryAttribute
 from survey.attributes import CountAttribute
 from survey.questions import Question
-from survey.questions import SingleChoiceQuestion, FreeTextQuestion, LikertQuestion, MultiChoiceQuestion
+from survey.questions import SingleChoiceQuestion, FreeTextQuestion, \
+    LikertQuestion, MultiChoiceQuestion
 from survey.questions import CountQuestion
 from survey.questions import PositiveMeasureQuestion
 from survey.questions import RankedChoiceQuestion
 from survey.respondents import Respondent
 from survey.surveys.metadata.attribute_metadata import AttributeMetadata
 from survey.surveys.metadata.question_metadata import QuestionMetadata
-from survey.surveys.survey_creators.choices import get_choices, get_likert_choices, get_multi_choices
+from survey.surveys.survey_creators.choices import get_choices, \
+    get_likert_choices, get_multi_choices
 
 
 class SurveyCreator(object):
 
     def __init__(self,
                  survey_name: str,
-                 survey_data_fn: Union[str, Path], metadata_fn: Union[str, Path],
-                 survey_id_col: Optional[str] = None, survey_id: Optional = None,
+                 survey_data_fn: Union[str, Path],
+                 metadata_fn: Union[str, Path],
+                 survey_id_col: Optional[str] = None,
+                 survey_id: Optional = None,
                  pre_clean: Optional[Callable[[DataFrame], DataFrame]] = None):
         """
 
         :param survey_name: Name for the survey.
         :param survey_data_fn: Path to the survey raw data file.
         :param metadata_fn: Path to the survey metadata file.
-        :param survey_id_col: Optional name of the column that identifies the survey in the metadata file.
-        :param survey_id: Optional value that identifies the survey in the metadata file.
+        :param survey_id_col: Optional name of the column that identifies the
+                              survey in the metadata file.
+        :param survey_id: Optional value that identifies the survey in the
+                          metadata file.
         :param pre_clean: Optional method to run on the raw data file on read.
         """
         # now
         self.survey_name: str = survey_name
-        self.survey_data_fn: str = survey_data_fn if isinstance(survey_data_fn, Path) else Path(survey_data_fn)
-        self.metadata_fn: Path = metadata_fn if isinstance(metadata_fn, Path) else Path(metadata_fn)
+        self.survey_data_fn: str = (
+            survey_data_fn if isinstance(survey_data_fn, Path)
+            else Path(survey_data_fn)
+        )
+        self.metadata_fn: Path = (
+            metadata_fn if isinstance(metadata_fn, Path)
+            else Path(metadata_fn)
+        )
         self.survey_id_col: Optional[str] = survey_id_col
         self.survey_id: Optional = survey_id
         self.survey: Optional[Survey] = None
@@ -100,7 +113,7 @@ class SurveyCreator(object):
             questions_metadata = self._filter_to_survey(questions_metadata)
             attributes_metadata = self._filter_to_survey(attributes_metadata)
             orders_metadata = self._filter_to_survey(orders_metadata)
-        # check for clashes in question names, attribute names and category names
+        # check for clashes in question, attribute and category names
         category_names = sorted(orders_metadata['category'].unique())
         q_name_errors = []
         for q_name in sorted(questions_metadata['name'].unique()):
@@ -120,7 +133,7 @@ class SurveyCreator(object):
                 f'The following categories clash with attribute names. '
                 f'Rename attributes or categories.\n{a_name_errors}'
             )
-        # check that each order listed in the question and attribute categories exists
+        # check each order listed in question and attribute categories exists
         # create ordered choices for questions with shared choices
         for meta in (attributes_metadata, questions_metadata):
             for idx, row in meta.iterrows():
@@ -129,7 +142,9 @@ class SurveyCreator(object):
                     order_value = row['categories']
                     if q_name == order_value:
                         continue  # already assigned to the question
-                    ordered_choices = orders_metadata[orders_metadata['category'] == order_value].copy()
+                    ordered_choices = orders_metadata[
+                        orders_metadata['category'] == order_value
+                        ].copy()
                     ordered_choices['category'] = q_name
                     orders_metadata = concat([orders_metadata, ordered_choices])
         # set member variables
@@ -140,8 +155,12 @@ class SurveyCreator(object):
     def validate_metadata(self):
 
         # validate categories
-        question_category_groups = self.questions_metadata['categories'].dropna().unique()
-        attribute_category_groups = self.attributes_metadata['categories'].dropna().unique()
+        question_category_groups = (
+            self.questions_metadata['categories'].dropna().unique()
+        )
+        attribute_category_groups = (
+            self.attributes_metadata['categories'].dropna().unique()
+        )
         missing_q_cats = []
         missing_a_cats = []
         categories = self.orders_metadata['category'].unique()
@@ -154,7 +173,8 @@ class SurveyCreator(object):
         missing_cats = missing_q_cats + missing_a_cats
         if len(missing_q_cats) or len(missing_a_cats):
             raise ValueError(
-                'Categories listed in questions / attribute sheets not present in orders sheet:\n' +
+                'Categories listed in questions / attribute sheets'
+                ' not present in orders sheet:\n' +
                 '\n'.join(missing_cats)
             )
 
@@ -167,7 +187,10 @@ class SurveyCreator(object):
             self.questions_metadata
         )
 
-    def _clean_single_column_data(self, question_metadata: QuestionMetadata) -> Series:
+    def _clean_single_column_data(
+            self,
+            question_metadata: QuestionMetadata
+    ) -> Series:
 
         if question_metadata.expression is None:
             return self.survey_data[question_metadata.text]
@@ -202,8 +225,12 @@ class SurveyCreator(object):
     def format_survey_data(self):
 
         survey_data = self.survey_data
-        survey_data = survey_data.rename(columns=AttributeMetadata.text_to_name(self.attribute_metadatas))
-        survey_data = survey_data.rename(columns=QuestionMetadata.text_to_name(self.question_metadatas))
+        survey_data = survey_data.rename(
+            columns=AttributeMetadata.text_to_name(self.attribute_metadatas)
+        )
+        survey_data = survey_data.rename(
+            columns=QuestionMetadata.text_to_name(self.question_metadatas)
+        )
         self.survey_data = survey_data
 
     # region creation
@@ -213,8 +240,10 @@ class SurveyCreator(object):
         return [c.strip() for c in choices.split('; ')]
 
     @staticmethod
-    def _create_questions(questions_meta: List[QuestionMetadata],
-                          survey_data: DataFrame, orders_meta: DataFrame) -> List[Question]:
+    def _create_questions(
+            questions_meta: List[QuestionMetadata],
+            survey_data: DataFrame, orders_meta: DataFrame
+    ) -> List[Question]:
 
         questions: List[Question] = []
         prev_qname = ''
@@ -266,28 +295,37 @@ class SurveyCreator(object):
                 questions.append(CountQuestion(
                     name=q_meta.name, text=q_meta.text
                 ))
-            elif q_meta.type_name in ('PositiveMeasure', 'PositiveMeasureQuestion'):
+            elif q_meta.type_name in ('PositiveMeasure',
+                                      'PositiveMeasureQuestion'):
                 questions.append(PositiveMeasureQuestion(
                     name=q_meta.name, text=q_meta.text
                 ))
             else:
-                raise ValueError(f'Question Type {q_meta.type_name} is not supported')
+                raise ValueError(
+                    f'Question Type {q_meta.type_name} is not supported'
+                )
             prev_qname = q_meta.name
         # clean up string answers
         for question in questions:
-            if isinstance(question, CategoricalMixin) and isinstance(question, Question):
+            if (
+                    isinstance(question, CategoricalMixin) and
+                    isinstance(question, Question)
+            ):
                 survey_data[question.name] = survey_data[question.name].map(
                     lambda v: v.strip() if type(v) is str else v
                 )
         return questions
 
     @staticmethod
-    def _create_respondent_attributes(attributes_meta: List[AttributeMetadata],
-                                      survey_data: DataFrame, orders_meta: DataFrame) -> List[RespondentAttribute]:
+    def _create_respondent_attributes(
+            attributes_meta: List[AttributeMetadata],
+            survey_data: DataFrame, orders_meta: DataFrame
+    ) -> List[RespondentAttribute]:
 
         respondent_attributes = []
         for a_meta in attributes_meta:
-            if a_meta.type_name in ('SingleCategory', 'SingleCategoryAttribute'):
+            if a_meta.type_name in ('SingleCategory',
+                                    'SingleCategoryAttribute'):
                 choices = get_choices(
                     orders_meta=orders_meta, survey_data=survey_data,
                     question_name=a_meta.name
@@ -301,20 +339,28 @@ class SurveyCreator(object):
                 respondent_attributes.append(CountAttribute(
                     name=a_meta.name, text=a_meta.text
                 ))
-            elif a_meta.type_name in ('PositiveMeasure', 'PositiveMeasureAttribute'):
+            elif a_meta.type_name in ('PositiveMeasure',
+                                      'PositiveMeasureAttribute'):
                 respondent_attributes.append(PositiveMeasureAttribute(
                     name=a_meta.name, text=a_meta.text
                 ))
             else:
-                raise ValueError(f'Attribute Type {a_meta.type_name} is not supported')
+                raise ValueError(
+                    f'Attribute Type {a_meta.type_name} is not supported'
+                )
         return respondent_attributes
 
     @staticmethod
-    def _create_respondents(survey_data: DataFrame, attributes_meta: List[AttributeMetadata]) -> List[Respondent]:
+    def _create_respondents(
+            survey_data: DataFrame,
+            attributes_meta: List[AttributeMetadata]
+    ) -> List[Respondent]:
 
         respondents = []
         for ix, row in survey_data.iterrows():
-            respondent_attrs = row.reindex([a_meta.name for a_meta in attributes_meta]).to_dict()
+            respondent_attrs = row.reindex([
+                a_meta.name for a_meta in attributes_meta
+            ]).to_dict()
             respondents.append(Respondent(
                 respondent_id=ix,
                 attributes=respondent_attrs
@@ -343,6 +389,9 @@ class SurveyCreator(object):
     def create_survey(self):
 
         self.survey = Survey(
-            name=self.survey_name, data=self.survey_data, questions=self.questions,
-            respondents=self.respondents, items=self.respondent_attributes
+            name=self.survey_name,
+            data=self.survey_data,
+            questions=self.questions,
+            respondents=self.respondents,
+            items=self.respondent_attributes
         )

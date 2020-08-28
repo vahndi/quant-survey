@@ -1,0 +1,3 @@
+class SurveyMonkeyCreator(object):
+
+    pass
