@@ -1,5 +1,6 @@
 from typing import Optional
 
+from mpl_format.axes import AxesFormatter
 from mpl_format.axes.axis_utils import new_axes
 from mpl_toolkits.axes_grid1.mpl_axes import Axes
 from numpy import arange, histogram, ndarray
@@ -8,6 +9,8 @@ from seaborn import distplot
 
 from survey.compound_types import Bins
 from survey.mixins.data_types.numerical_1d_mixin import Numerical1dMixin
+from survey.mixins.data_types.single_category_pt_mixin import \
+    SingleCategoryPTMixin
 
 
 class Continuous1dMixin(Numerical1dMixin):
@@ -21,7 +24,8 @@ class Continuous1dMixin(Numerical1dMixin):
 
     def plot_distribution(self, data: Optional[Series] = None,
                           transpose: bool = False,
-                          ax: Optional[Axes] = None) -> Axes:
+                          ax: Optional[Axes] = None,
+                          **kwargs) -> Axes:
         """
         Plot the distribution of answers to the Question.
 
@@ -36,7 +40,8 @@ class Continuous1dMixin(Numerical1dMixin):
         ax = ax or new_axes()
         distplot(a=data.dropna(),
                  rug=True, kde=True, hist=False,
-                 vertical=transpose, ax=ax)
+                 vertical=transpose, ax=ax,
+                 **kwargs)
         min_val = data.min()
         max_val = data.max()
 
@@ -60,6 +65,25 @@ class Continuous1dMixin(Numerical1dMixin):
                 ax.set_xlim(0, ax.get_xlim()[1])
 
         return ax
+
+    def plot_cpd(self, condition: SingleCategoryPTMixin,
+                 ax: Optional[Axes] = None,
+                 **kwargs):
+        """
+        Plot distributions of answers to the question, conditioned on the
+        values of discrete distribution `condition`.
+        """
+        axf = AxesFormatter(axes=ax)
+        for condition_value in condition.category_names:
+            condition_ix = condition.data == condition_value
+            distplot(a=self._data.loc[condition_ix],
+                     label=condition_value,
+                     rug=False, kde=True, hist=False,
+                     ax=axf.axes, **kwargs)
+        axf.add_legend()
+        axf.set_text(x_label=self.name,
+                     y_label=f'P({self.name}|{condition.name})')
+        return axf.axes
 
     def distribution_table(
         self, data: Optional[Series] = None,

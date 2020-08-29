@@ -368,7 +368,9 @@ class QuestionGroup(ItemContainerMixin,
         except KeyError:
             return None
 
-    def single_choice_question(self, name: str) -> Optional[SingleChoiceQuestion]:
+    def single_choice_question(
+            self, name: str
+    ) -> Optional[SingleChoiceQuestion]:
         """
         Return the Single-Choice Question with the given name.
         """
