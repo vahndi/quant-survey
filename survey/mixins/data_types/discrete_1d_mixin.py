@@ -14,7 +14,12 @@ class Discrete1dMixin(Numerical1dMixin):
 
     @staticmethod
     def _default_hist(data: Series) -> ndarray:
-        return arange(-0.5, data.max() + 1.5)
+        min_val = data.min()
+        max_val = data.max()
+        if min_val <= max_val / 10:
+            return arange(-0.5, max_val + 1.5)
+        else:
+            return arange(min_val - 0.5, max_val + 1.5)
 
     def plot_distribution(
             self, data: Optional[Series] = None,
