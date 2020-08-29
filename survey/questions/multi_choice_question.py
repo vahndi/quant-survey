@@ -183,12 +183,13 @@ class MultiChoiceQuestion(
                           significance: bool = False,
                           sig_colors: Tuple[str, str] = ('#00ff00', '#ff0000'),
                           label_mappings: Optional[Dict[str, str]] = None,
-                          title: Optional[str] = None,
                           grid: bool = False,
                           max_axis_label_chars: Optional[int] = None,
+                          title: Optional[str] = None,
                           x_label: Optional[str] = None,
                           y_label: Optional[str] = None,
-                          ax: Optional[Axes] = None) -> Axes:
+                          ax: Optional[Axes] = None,
+                          **kwargs) -> Axes:
         """
         Plot the distribution of answers to the Question.
 
@@ -203,14 +204,20 @@ class MultiChoiceQuestion(
         :param sig_colors: Tuple of (high, low) colors for highlighting
                            significance.
         :param label_mappings: Optional dict of replacements for labels.
-        :param title: Optional title for the plot.
         :param grid: Whether to show a plot grid or not.
         :param max_axis_label_chars: Maximum number of characters in axis labels
                                      before wrapping.
+        :param title: Axes title.
         :param x_label: Label for the x-axis.
         :param y_label: Label for the y-axis.
         """
         data = data if data is not None else self._data
+        if title is None:
+            title = self.text
+        if x_label is None:
+            x_label = self.name
+        if y_label is None:
+            y_label = '# Respondents'
         if data is None:
             raise ValueError('No data!')
         if len(data) == 0:
@@ -242,7 +249,8 @@ class MultiChoiceQuestion(
             line_width = [2 if ec != color else None for ec in edge_color]
 
         item_counts.plot(kind=plot_type, ax=ax, color=color,
-                         edgecolor=edge_color, linewidth=line_width)
+                         edgecolor=edge_color, linewidth=line_width,
+                         **kwargs)
 
         # add percentages
         item_pcts = 100 * item_counts.div(len(features))
