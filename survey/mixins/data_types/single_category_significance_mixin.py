@@ -1,6 +1,6 @@
 from itertools import product
 from pandas import Series, DataFrame, pivot_table
-from probability.distributions import BetaBinomial
+from probability.distributions import BetaBinomial, BetaBinomialConjugate
 from typing import List
 
 
@@ -26,12 +26,12 @@ class SingleCategorySignificanceMixin(object):
             except KeyError:
                 category_count = 0
             num_responses = len(self.data.dropna())
-            bb_category = BetaBinomial(1, 1,
-                                       num_responses,
-                                       category_count)
-            bb_rest = BetaBinomial(1, 1,
-                                   num_responses,
-                                   num_responses - category_count)
+            bb_category = BetaBinomialConjugate(
+                1, 1, num_responses, category_count
+            )
+            bb_rest = BetaBinomialConjugate(
+                1, 1, num_responses, num_responses - category_count
+            )
             results.append({'category': category,
                             'p': bb_category.posterior() > bb_rest.posterior()})
         return DataFrame(results).set_index('category')['p']
@@ -53,8 +53,8 @@ class SingleCategorySignificanceMixin(object):
             results.append({
                 'category': category,
                 'p': (
-                    BetaBinomial(1, 1, n_one, m_one).posterior() >
-                    BetaBinomial(1, 1, n_any, m_any).posterior()
+                    BetaBinomialConjugate(1, 1, n_one, m_one).posterior() >
+                    BetaBinomialConjugate(1, 1, n_any, m_any).posterior()
                 )
             })
         return DataFrame(results).set_index('category')['p']
@@ -75,8 +75,12 @@ class SingleCategorySignificanceMixin(object):
             except KeyError:
                 category_2_count = 0
             num_responses = len(self.data.dropna())
-            bb_category_1 = BetaBinomial(1, 1, num_responses, category_1_count)
-            bb_category_2 = BetaBinomial(1, 1, num_responses, category_2_count)
+            bb_category_1 = BetaBinomialConjugate(
+                1, 1, num_responses, category_1_count
+            )
+            bb_category_2 = BetaBinomialConjugate(
+                1, 1, num_responses, category_2_count
+            )
             results.append({
                 'category_1': category_1,
                 'category_2': category_2,

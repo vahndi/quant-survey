@@ -1,6 +1,6 @@
 from itertools import product
 from pandas import DataFrame
-from probability.distributions import BetaBinomial
+from probability.distributions import BetaBinomial, BetaBinomialConjugate
 from tqdm import tqdm
 from typing import List, Tuple
 
@@ -72,8 +72,8 @@ class SingleToSingleExperimentMixin(object):
             condition_category=self._independent, condition_values=ctl_ind_values
         )
         # create beta-binomial distribution for each group
-        bb_exp = BetaBinomial(alpha=1, beta=1, n=n_exp, m=k_exp)
-        bb_ctl = BetaBinomial(alpha=1, beta=1, n=n_ctl, m=k_ctl)
+        bb_exp = BetaBinomialConjugate(alpha=1, beta=1, n=n_exp, m=k_exp)
+        bb_ctl = BetaBinomialConjugate(alpha=1, beta=1, n=n_ctl, m=k_ctl)
         # calculate probability of superiority of test group
         return bb_ctl, bb_exp
 

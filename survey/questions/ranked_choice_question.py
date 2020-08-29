@@ -4,7 +4,7 @@ from mpl_format.axes.axes_formatter import AxesFormatter
 from mpl_format.axes.axis_utils import new_axes
 from mpl_format.text.text_utils import map_text, wrap_text
 from pandas import Series, isnull, DataFrame, pivot_table, notnull
-from probability.distributions import BetaBinomial
+from probability.distributions import BetaBinomial, BetaBinomialConjugate
 from seaborn import heatmap
 from typing import List, Optional, Dict, Tuple
 
@@ -119,8 +119,8 @@ class RankedChoiceQuestion(
             results.append({
                 'category': category,
                 'p': (
-                    BetaBinomial(1, 1, n, m_one).posterior() >
-                    BetaBinomial(1, 1, n, m_rest).posterior()
+                    BetaBinomialConjugate(1, 1, n, m_one).posterior() >
+                    BetaBinomialConjugate(1, 1, n, m_rest).posterior()
                 )
             })
         return DataFrame(results).set_index('category')['p']
@@ -141,8 +141,8 @@ class RankedChoiceQuestion(
                 'category_1': category_1,
                 'category_2': category_2,
                 'p': (
-                    BetaBinomial(1, 1, n, m_1).posterior() >
-                    BetaBinomial(1, 1, n, m_2).posterior()
+                    BetaBinomialConjugate(1, 1, n, m_1).posterior() >
+                    BetaBinomialConjugate(1, 1, n, m_2).posterior()
                 )
             })
         results_data = DataFrame(results)

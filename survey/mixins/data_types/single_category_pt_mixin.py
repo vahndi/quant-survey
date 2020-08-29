@@ -1,7 +1,7 @@
 from itertools import product
 from matplotlib.axes import Axes
 from pandas import Series, DataFrame
-from probability.distributions import BetaBinomial
+from probability.distributions import BetaBinomial, BetaBinomialConjugate
 from typing import List, Tuple, Optional
 
 from survey.utils.data_frames import count_coincidences
@@ -77,8 +77,12 @@ class SingleCategoryPTMixin(object):
                         self.name: cat_1,
                         other.name: cat_2,
                         'p': (
-                            BetaBinomial(1, 1, n_total, m_event).posterior() >
-                            BetaBinomial(1, 1, n_total, m_any).posterior()
+                            BetaBinomialConjugate(
+                                1, 1, n_total, m_event
+                            ).posterior() >
+                            BetaBinomialConjugate(
+                                1, 1, n_total, m_any
+                            ).posterior()
                         )
                     })
                 results_data = DataFrame(results)
@@ -174,9 +178,9 @@ class SingleCategoryPTMixin(object):
                                 (len(self.category_names) - 1)
                             )
                             p = (
-                                BetaBinomial(
+                                BetaBinomialConjugate(
                                     1, 1, n_cond, m_prob_cond
-                                ).posterior() > BetaBinomial(
+                                ).posterior() > BetaBinomialConjugate(
                                     1, 1, n_cond, m_any
                                 ).posterior()
                             )
@@ -195,9 +199,9 @@ class SingleCategoryPTMixin(object):
                             m_any = n_prob - m_prob_cond
                             n_any = n - n_cond
                             p = (
-                                BetaBinomial(
+                                BetaBinomialConjugate(
                                     1, 1, n_cond, m_prob_cond
-                                ).posterior() > BetaBinomial(
+                                ).posterior() > BetaBinomialConjugate(
                                     1, 1, n_any, m_any
                                 ).posterior()
                             )
@@ -332,8 +336,11 @@ class SingleCategoryPTMixin(object):
                         self.name: cat_1,
                         other.name: cat_2,
                         'p': (
-                            BetaBinomial(1, 1, n_total, m_event).posterior() >
-                            BetaBinomial(1, 1, n_total, m_any).posterior()
+                            BetaBinomialConjugate(
+                                1, 1, n_total, m_event
+                            ).posterior() > BetaBinomialConjugate(
+                                1, 1, n_total, m_any
+                            ).posterior()
                         )
                     })
                 results_data = DataFrame(results)

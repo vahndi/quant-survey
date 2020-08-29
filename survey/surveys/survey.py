@@ -7,7 +7,7 @@ from mpl_format.axes.axis_utils import new_axes
 from mpl_format.text.text_utils import wrap_text
 from numpy.ma import diag
 from pandas import DataFrame, Series, concat
-from probability.distributions import BetaBinomial
+from probability.distributions import BetaBinomial, BetaBinomialConjugate
 from seaborn import heatmap
 
 from survey.attributes import CountAttribute
@@ -389,8 +389,8 @@ class Survey(QuestionGroup, AttributeGroup, object):
                                      condition_category=attribute,
                                      condition_values=ctl_attr_values)
         # create beta-binomial distribution for each group
-        bb_exp = BetaBinomial(alpha=1, beta=1, n=n_exp, m=k_exp)
-        bb_ctl = BetaBinomial(alpha=1, beta=1, n=n_ctl, m=k_ctl)
+        bb_exp = BetaBinomialConjugate(alpha=1, beta=1, n=n_exp, m=k_exp)
+        bb_ctl = BetaBinomialConjugate(alpha=1, beta=1, n=n_ctl, m=k_ctl)
         # calculate probability of superiority of test group
         p_superior = bb_exp > bb_ctl
 

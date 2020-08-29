@@ -5,7 +5,7 @@ from matplotlib.patches import Patch
 from mpl_format.axes.axis_utils import new_axes
 from mpl_format.text.text_utils import wrap_text
 from pandas import Series, DataFrame, pivot_table, concat
-from probability.distributions import BetaBinomial
+from probability.distributions import BetaBinomial, BetaBinomialConjugate
 from typing import Dict, List, Union, Callable, Optional, Tuple
 
 from survey.mixins.data import CategoricalDataMixin
@@ -124,8 +124,12 @@ class LikertQuestion(
             except KeyError:
                 category_2_count = 0
             num_responses = len(self._data.dropna())
-            bb_category_1 = BetaBinomial(1, 1, num_responses, category_1_count)
-            bb_category_2 = BetaBinomial(1, 1, num_responses, category_2_count)
+            bb_category_1 = BetaBinomialConjugate(
+                1, 1, num_responses, category_1_count
+            )
+            bb_category_2 = BetaBinomialConjugate(
+                1, 1, num_responses, category_2_count
+            )
             results.append({
                 'category_1': category_1,
                 'category_2': category_2,
@@ -345,8 +349,12 @@ class LikertQuestion(
         """
         data_self = self.make_features()
         data_other = other.make_features()
-        bb_self = BetaBinomial(1, 1, len(data_self), data_self.sum())
-        bb_other = BetaBinomial(1, 1, len(data_other), data_other.sum())
+        bb_self = BetaBinomialConjugate(
+            1, 1, len(data_self), data_self.sum()
+        )
+        bb_other = BetaBinomialConjugate(
+            1, 1, len(data_other), data_other.sum()
+        )
         return bb_self.posterior() > bb_other.posterior()
 
     def __lt__(self, other: 'LikertQuestion') -> float:

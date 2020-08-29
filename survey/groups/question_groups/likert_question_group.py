@@ -6,7 +6,7 @@ from mpl_format.axes.axis_utils import new_axes
 from mpl_format.figures.figure_formatter import FigureFormatter
 from mpl_toolkits.axes_grid1.mpl_axes import Axes
 from pandas import Series, DataFrame, pivot_table, concat, value_counts
-from probability.distributions import BetaBinomial
+from probability.distributions import BetaBinomial, BetaBinomialConjugate
 from seaborn import heatmap
 from typing import Dict, Optional, List, Any, Tuple, Union
 
@@ -75,8 +75,12 @@ class LikertQuestionGroup(QuestionContainerMixin,
                 self._item_dict[k].make_features()
                 for k in other_keys
             ], axis=0)
-            bb_one = BetaBinomial(1, 1, len(data_one), data_one.sum())
-            bb_rest = BetaBinomial(1, 1, len(data_rest), data_rest.sum())
+            bb_one = BetaBinomialConjugate(
+                1, 1, len(data_one), data_one.sum()
+            )
+            bb_rest = BetaBinomialConjugate(
+                1, 1, len(data_rest), data_rest.sum()
+            )
             results.append({
                 'name': key,
                 'p': bb_one.posterior() > bb_rest.posterior()

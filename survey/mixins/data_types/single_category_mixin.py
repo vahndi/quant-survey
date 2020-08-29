@@ -4,7 +4,7 @@ from mpl_format.text.text_utils import wrap_text
 from mpl_toolkits.axes_grid1.mpl_axes import Axes
 from numpy import nan
 from pandas import Series, DataFrame, get_dummies, concat
-from probability.distributions import BetaBinomial
+from probability.distributions import BetaBinomial, BetaBinomialConjugate
 from typing import List, Union, Tuple, Optional, Dict
 
 from survey.utils.plots import label_pair_bar_plot_pcts
@@ -248,8 +248,8 @@ class SingleCategoryMixin(object):
             results.append({
                 'category': category,
                 'p': (
-                        BetaBinomial(1, 1, n_self, m_self).posterior() >
-                        BetaBinomial(1, 1, n_other, m_other).posterior()
+                    BetaBinomialConjugate(1, 1, n_self, m_self).posterior() >
+                    BetaBinomialConjugate(1, 1, n_other, m_other).posterior()
                 )
             })
         results_data = DataFrame(results).set_index('category')['p']

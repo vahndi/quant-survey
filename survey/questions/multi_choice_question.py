@@ -6,7 +6,7 @@ from mpl_format.axes.axis_utils import new_axes
 from mpl_format.text.text_utils import wrap_text, map_text
 from numpy import nan
 from pandas import Series, DataFrame, pivot_table, concat, isnull, notnull
-from probability.distributions import BetaBinomial
+from probability.distributions import BetaBinomial, BetaBinomialConjugate
 from typing import List, Optional, Dict, Tuple, Union, TYPE_CHECKING
 
 from survey.constants import CATEGORY_SPLITTER
@@ -54,12 +54,17 @@ class MultiChoiceQuestion(
                      for selection in item.split(CATEGORY_SPLITTER)
                      if notnull(selection)])
         errors = []
+        error_vals = []
         for unique_val in unique:
             if unique_val not in self._categories:
+                error_vals.append(unique_val)
                 errors.append(f'"{unique_val}" is not in categories'
                               f' for question "{self.text}".')
         if errors:
-            raise ValueError('\n'.join(errors))
+            raise ValueError(
+                '\n'.join(errors) +
+                '\nList of values:\n' + '\n'.join(error_vals)
+            )
 
     def make_features(self, answers: Series = None, drop_na: bool = True,
                       naming: str = '{{name}}: {{choice}}',
@@ -139,8 +144,8 @@ class MultiChoiceQuestion(
             results.append({
                 'category': category,
                 'p': (
-                    BetaBinomial(1, 1, n_one, m_one).posterior() >
-                    BetaBinomial(1, 1, n_rest, m_rest).posterior()
+                    BetaBinomialConjugate(1, 1, n_one, m_one).posterior() >
+                    BetaBinomialConjugate(1, 1, n_rest, m_rest).posterior()
                 )
             })
         return DataFrame(results).set_index('category')['p']
@@ -161,8 +166,8 @@ class MultiChoiceQuestion(
                 'category_1': category_1,
                 'category_2': category_2,
                 'p': (
-                        BetaBinomial(1, 1, n, m_1).posterior() >
-                        BetaBinomial(1, 1, n, m_2).posterior()
+                    BetaBinomialConjugate(1, 1, n, m_1).posterior() >
+                    BetaBinomialConjugate(1, 1, n, m_2).posterior()
                 )
             })
         results_data = DataFrame(results)
@@ -522,8 +527,8 @@ class MultiChoiceQuestion(
             results.append({
                 'category': category,
                 'p': (
-                    BetaBinomial(1, 1, n_self, m_self).posterior() >
-                    BetaBinomial(1, 1, n_other, m_other).posterior()
+                    BetaBinomialConjugate(1, 1, n_self, m_self).posterior() >
+                    BetaBinomialConjugate(1, 1, n_other, m_other).posterior()
                 )
             })
         return DataFrame(results).set_index('category')['p']
