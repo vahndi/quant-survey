@@ -7,7 +7,7 @@ from mpl_format.axes.axis_utils import new_axes
 from mpl_format.text.text_utils import wrap_text
 from numpy.ma import diag
 from pandas import DataFrame, Series, concat
-from probability.distributions import BetaBinomial, BetaBinomialConjugate
+from probability.distributions import BetaBinomialConjugate
 from seaborn import heatmap
 
 from survey.attributes import CountAttribute
@@ -17,12 +17,12 @@ from survey.attributes import SingleCategoryAttribute
 from survey.custom_types import CategoricalQuestion, Categorical, Numerical
 from survey.groups.attribute_groups.attribute_group import AttributeGroup
 from survey.groups.question_groups.question_group import QuestionGroup
-from survey.questions import Question
 from survey.questions import CountQuestion
 from survey.questions import FreeTextQuestion
 from survey.questions import LikertQuestion
 from survey.questions import MultiChoiceQuestion
 from survey.questions import PositiveMeasureQuestion
+from survey.questions import Question
 from survey.questions import RankedChoiceQuestion
 from survey.questions import SingleChoiceQuestion
 from survey.respondents.respondent import Respondent

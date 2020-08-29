@@ -297,9 +297,8 @@ class QuestionGroup(ItemContainerMixin,
         Return the Categorical Question with the given name.
         """
         try:
-            return [q for q in self.categorical_questions.to_list()
-                    if q.name == name][0]
-        except IndexError:
+            return self.categorical_questions[name]
+        except KeyError:
             return None
 
     def count_question(self, name: str) -> Optional[CountQuestion]:
@@ -307,9 +306,8 @@ class QuestionGroup(ItemContainerMixin,
         Return the Count Question with the given name.
         """
         try:
-            return [q for q in self.count_questions.to_list()
-                    if q.name == name][0]
-        except IndexError:
+            return self.count_questions[name]
+        except KeyError:
             return None
 
     def free_text_question(self, name: str) -> Optional[FreeTextQuestion]:
@@ -317,9 +315,8 @@ class QuestionGroup(ItemContainerMixin,
         Return the FreeText Question with the given name.
         """
         try:
-            return [q for q in self.free_text_questions.to_list()
-                    if q.name == name][0]
-        except IndexError:
+            return self.free_text_questions[name]
+        except KeyError:
             return None
 
     def likert_question(self, name: str) -> Optional[LikertQuestion]:
@@ -327,9 +324,8 @@ class QuestionGroup(ItemContainerMixin,
         Return the Likert Question with the given name.
         """
         try:
-            return [q for q in self.likert_questions.to_list()
-                    if q.name == name][0]
-        except IndexError:
+            return self.likert_questions[name]
+        except KeyError:
             return None
 
     def multi_choice_question(self, name: str) -> Optional[MultiChoiceQuestion]:
@@ -337,9 +333,8 @@ class QuestionGroup(ItemContainerMixin,
         Return the Multi-Choice Question with the given name.
         """
         try:
-            return [q for q in self.multi_choice_questions.to_list()
-                    if q.name == name][0]
-        except IndexError:
+            return self.multi_choice_questions[name]
+        except KeyError:
             return None
 
     def numerical_question(self, name: str) -> Optional[NumericalQuestion]:
@@ -347,29 +342,30 @@ class QuestionGroup(ItemContainerMixin,
         Return the Categorical Question with the given name.
         """
         try:
-            return [q for q in self.numerical_questions.to_list()
-                    if q.name == name][0]
-        except IndexError:
+            return self.numerical_questions[name]
+        except KeyError:
             return None
 
-    def ranked_choice_question(self, name: str) -> Optional[RankedChoiceQuestion]:
+    def ranked_choice_question(
+            self, name: str
+    ) -> Optional[RankedChoiceQuestion]:
         """
         Return the Ranked-Choice Question with the given name.
         """
         try:
-            return [q for q in self.ranked_choice_questions.to_list()
-                    if q.name == name][0]
-        except IndexError:
+            return self.ranked_choice_questions[name]
+        except KeyError:
             return None
 
-    def positive_measure_question(self, name: str) -> Optional[PositiveMeasureQuestion]:
+    def positive_measure_question(
+            self, name: str
+    ) -> Optional[PositiveMeasureQuestion]:
         """
         Return the Positive Measure Question with the given name.
         """
         try:
-            return [q for q in self.positive_measure_questions.to_list()
-                    if q.name == name][0]
-        except IndexError:
+            return self.positive_measure_questions[name]
+        except KeyError:
             return None
 
     def single_choice_question(self, name: str) -> Optional[SingleChoiceQuestion]:
@@ -377,9 +373,8 @@ class QuestionGroup(ItemContainerMixin,
         Return the Single-Choice Question with the given name.
         """
         try:
-            return [q for q in self.single_choice_questions.to_list()
-                    if q.name == name][0]
-        except IndexError:
+            return self.single_choice_questions[name]
+        except KeyError:
             return None
 
     # endregion

@@ -29,7 +29,8 @@ class AttributeGroup(ItemContainerMixin, AttributeContainerMixin, object):
 
         :param items: Mapping of names to Attributes or Groups.
         """
-        self._attributes = [a for a in items.values() if isinstance(a, RespondentAttribute)]
+        self._attributes = [a for a in items.values()
+                            if isinstance(a, RespondentAttribute)]
         self._groups = {name: group for name, group in items.items()
                         if isinstance(group, AttributeContainerMixin)}
         self._item_dict: Dict[str, Union[RespondentAttribute, 'AttributeGroup']] = items
@@ -105,7 +106,8 @@ class AttributeGroup(ItemContainerMixin, AttributeContainerMixin, object):
 
     def create_attribute_group(self, group_name: str, item_names: List[str]):
         """
-        Create and add to the Group a new AttributeGroup from the named items of the Group.
+        Create and add to the Group a new AttributeGroup from the named items
+        of the Group.
 
         :param group_name: The name for the new group.
         :param item_names: Names of the items to use in the group.
@@ -196,53 +198,58 @@ class AttributeGroup(ItemContainerMixin, AttributeContainerMixin, object):
 
     # region get attribute of a given type by name
 
-    def categorical_attribute(self, name: str) -> Optional[CategoricalAttribute]:
+    def categorical_attribute(
+            self, name: str
+    ) -> Optional[CategoricalAttribute]:
         """
         Return the Categorical Attribute with the given name.
         """
         try:
-            return [q for q in self.categorical_attributes
-                    if q.name == name][0]
-        except IndexError:
+            return self.categorical_attributes[name]
+        except KeyError:
             return None
 
-    def single_category_attribute(self, name: str) -> Optional[SingleCategoryAttribute]:
+    def single_category_attribute(
+            self, name: str
+    ) -> Optional[SingleCategoryAttribute]:
         """
         Return the Categorical Attribute with the given name.
         """
         try:
-            return [q for q in self.single_category_attributes
-                    if q.name == name][0]
-        except IndexError:
+            return self.single_category_attributes[name]
+        except KeyError:
             return None
 
-    def positive_measure_attribute(self, name: str) -> Optional[PositiveMeasureAttribute]:
+    def positive_measure_attribute(
+            self, name: str
+    ) -> Optional[PositiveMeasureAttribute]:
         """
         Return the Categorical Attribute with the given name.
         """
         try:
-            return [q for q in self.positive_measure_attributes
-                    if q.name == name][0]
-        except IndexError:
+            return self.positive_measure_attributes[name]
+        except KeyError:
             return None
 
-    def count_attribute(self, name: str) -> Optional[CountAttribute]:
+    def count_attribute(
+            self, name: str
+    ) -> Optional[CountAttribute]:
         """
         Return the Categorical Attribute with the given name.
         """
         try:
-            return [q for q in self.count_attributes
-                    if q.name == name][0]
-        except IndexError:
+            return self.count_attributes[name]
+        except KeyError:
             return None
 
-    def numerical_attribute(self, name: str) -> Optional[NumericalAttribute]:
+    def numerical_attribute(
+            self, name: str
+    ) -> Optional[NumericalAttribute]:
         """
         Return the Numerical Attribute with the given name.
         """
         try:
-            return [q for q in self.numerical_attributes
-                    if q.name == name][0]
+            return self.numerical_attributes[name]
         except IndexError:
             return None
 
@@ -254,63 +261,93 @@ class AttributeGroup(ItemContainerMixin, AttributeContainerMixin, object):
         """
         Return the name of each Categorical Attribute in the Survey.
         """
-        return [attribute.name for attribute in self.categorical_attributes.to_list()]
+        return [attribute.name for attribute in
+                self.categorical_attributes.to_list()]
 
     @property
     def count_attribute_names(self) -> List[str]:
         """
         Return the name of each CountAttribute in the Survey.
         """
-        return [attribute.name for attribute in self.count_attributes.to_list()]
+        return [attribute.name for attribute in
+                self.count_attributes.to_list()]
 
     @property
     def positive_measure_question_names(self) -> List[str]:
         """
         Return the name of each PositiveMeasureAttribute in the Survey.
         """
-        return [attribute.name for attribute in self.positive_measure_attributes.to_list()]
+        return [attribute.name for attribute in
+                self.positive_measure_attributes.to_list()]
 
     @property
     def single_category_question_names(self) -> List[str]:
         """
         Return the name of each SingleChoiceAttribute in the Survey.
         """
-        return [attribute.name for attribute in self.single_category_attributes.to_list()]
+        return [attribute.name for attribute in
+                self.single_category_attributes.to_list()]
 
     # endregion
 
     # region get existing groups of a given type by name
 
-    def categorical_group(self, group_name: str) -> Optional[CategoricalAttributeGroup]:
+    def categorical_group(
+            self, group_name: str
+    ) -> Optional[CategoricalAttributeGroup]:
 
-        if group_name in self._groups.keys() and isinstance(self._groups[group_name], CategoricalAttributeGroup):
+        if (
+                group_name in self._groups.keys() and
+                isinstance(self._groups[group_name], CategoricalAttributeGroup)
+        ):
             return self._groups[group_name]
 
     def count_group(self, group_name: str) -> Optional[CountAttributeGroup]:
 
-        if group_name in self._groups.keys() and isinstance(self._groups[group_name], CountAttributeGroup):
+        if (
+                group_name in self._groups.keys() and
+                isinstance(self._groups[group_name], CountAttributeGroup)
+        ):
             return self._groups[group_name]
 
-    def numerical_group(self, group_name: str) -> Optional[NumericalAttributeGroup]:
+    def numerical_group(
+            self, group_name: str
+    ) -> Optional[NumericalAttributeGroup]:
 
-        if group_name in self._groups.keys() and isinstance(self._groups[group_name], NumericalAttributeGroup):
+        if (
+                group_name in self._groups.keys() and
+                isinstance(self._groups[group_name], NumericalAttributeGroup)
+        ):
             return self._groups[group_name]
 
-    def positive_measure_group(self, group_name: str) -> Optional[PositiveMeasureAttributeGroup]:
+    def positive_measure_group(
+            self, group_name: str
+    ) -> Optional[PositiveMeasureAttributeGroup]:
 
-        if group_name in self._groups.keys() and isinstance(self._groups[group_name], PositiveMeasureAttributeGroup):
+        if (
+                group_name in self._groups.keys() and
+                isinstance(self._groups[group_name],
+                           PositiveMeasureAttributeGroup)
+        ):
             return self._groups[group_name]
 
-    def single_category_group(self, group_name: str) -> Optional[SingleCategoryAttributeGroup]:
+    def single_category_group(
+            self, group_name: str
+    ) -> Optional[SingleCategoryAttributeGroup]:
 
-        if group_name in self._groups.keys() and isinstance(self._groups[group_name], SingleCategoryAttributeGroup):
+        if (
+                group_name in self._groups.keys() and
+                isinstance(self._groups[group_name],
+                           SingleCategoryAttributeGroup)
+        ):
             return self._groups[group_name]
 
     # endregion
 
     def attribute_combination_counts(self) -> Series:
         """
-        Return the count of each unique combination of attributes of Survey Respondents.
+        Return the count of each unique combination of attributes of Survey
+        Respondents.
         """
         return (
             self.data[self.attribute_names]
@@ -331,8 +368,9 @@ class AttributeGroup(ItemContainerMixin, AttributeContainerMixin, object):
 
     def where(self, **kwargs) -> 'AttributeGroup':
         """
-        Return a new AttributeGroup with questions containing only the responses for users where the filtering conditions
-        are met. See FilterableMixin.where() for further documentation.
+        Return a new AttributeGroup with questions containing only the responses
+        for users where the filtering conditions are met. See
+        FilterableMixin.where() for further documentation.
         """
         return AttributeGroup({
             name: group.where(**kwargs)
