@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from typing import Dict, Optional, List, Any, Tuple, Union
 
 from matplotlib.figure import Figure
 from mpl_format.axes.axes_formatter import AxesFormatter
@@ -6,14 +7,16 @@ from mpl_format.axes.axis_utils import new_axes
 from mpl_format.figures.figure_formatter import FigureFormatter
 from mpl_toolkits.axes_grid1.mpl_axes import Axes
 from pandas import Series, DataFrame, pivot_table, concat, value_counts
-from probability.distributions import BetaBinomial, BetaBinomialConjugate
+from probability.distributions import BetaBinomialConjugate
 from seaborn import heatmap
-from typing import Dict, Optional, List, Any, Tuple, Union
 
 from survey.mixins.categorical_group_mixin import CategoricalGroupMixin
-from survey.mixins.containers.question_container_mixin import QuestionContainerMixin
-from survey.mixins.containers.single_category_stack_mixin import SingleCategoryStackMixin
-from survey.mixins.containers.single_type_question_container_mixin import SingleTypeQuestionContainerMixin
+from survey.mixins.containers.question_container_mixin import \
+    QuestionContainerMixin
+from survey.mixins.containers.single_category_stack_mixin import \
+    SingleCategoryStackMixin
+from survey.mixins.containers.single_type_question_container_mixin import \
+    SingleTypeQuestionContainerMixin
 from survey.questions import LikertQuestion
 from survey.utils.plots import draw_vertical_dividers
 from survey.utils.type_detection import all_are
@@ -61,6 +64,56 @@ class LikertQuestionGroup(QuestionContainerMixin,
         """
         return self._questions
 
+    @staticmethod
+    def from_question(
+            question: LikertQuestion,
+            split_by: CategoricalGroupMixin
+    ) -> 'LikertQuestionGroup':
+        """
+        Create a new LikertQuestionGroup by splitting an existing LikertQuestion
+        by the values of a Categorical question or attribute.
+        """
+        questions = {}
+
+        for category in split_by.category_names:
+            condition = {split_by.name: category}
+            questions[category] = question.where(**condition)
+        return LikertQuestionGroup(questions=questions)
+
+    # region statistics
+
+    def min(self) -> Series:
+        return Series(OrderedDict([
+            (key, question.min())
+            for key, question in self._item_dict.items()
+        ]))
+
+    def max(self) -> Series:
+        return Series(OrderedDict([
+            (key, question.max())
+            for key, question in self._item_dict.items()
+        ]))
+
+    def mean(self) -> Series:
+        return Series(OrderedDict([
+            (key, question.mean())
+            for key, question in self._item_dict.items()
+        ]))
+
+    def median(self) -> Series:
+        return Series(OrderedDict([
+            (key, question.median())
+            for key, question in self._item_dict.items()
+        ]))
+
+    def std(self) -> Series:
+        return Series(OrderedDict([
+            (key, question.std())
+            for key, question in self._item_dict.items()
+        ]))
+
+    # endregion
+
     def significance_one_vs_any(self) -> Series:
         """
         Return the probability that the response to each question is higher than
@@ -94,36 +147,6 @@ class LikertQuestionGroup(QuestionContainerMixin,
         group is higher than to each other question in this group.
         """
         return self >> self
-
-    def min(self) -> Series:
-        return Series(OrderedDict([
-            (key, question.min())
-            for key, question in self._item_dict.items()
-        ]))
-
-    def max(self) -> Series:
-        return Series(OrderedDict([
-            (key, question.max())
-            for key, question in self._item_dict.items()
-        ]))
-
-    def mean(self) -> Series:
-        return Series(OrderedDict([
-            (key, question.mean())
-            for key, question in self._item_dict.items()
-        ]))
-
-    def median(self) -> Series:
-        return Series(OrderedDict([
-            (key, question.median())
-            for key, question in self._item_dict.items()
-        ]))
-
-    def std(self) -> Series:
-        return Series(OrderedDict([
-            (key, question.std())
-            for key, question in self._item_dict.items()
-        ]))
 
     def __gt__(self, other: 'LikertQuestionGroup') -> Series:
         """
