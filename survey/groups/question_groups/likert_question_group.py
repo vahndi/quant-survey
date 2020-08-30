@@ -17,6 +17,7 @@ from survey.mixins.containers.single_category_stack_mixin import \
     SingleCategoryStackMixin
 from survey.mixins.containers.single_type_question_container_mixin import \
     SingleTypeQuestionContainerMixin
+from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.questions import LikertQuestion
 from survey.utils.plots import draw_vertical_dividers
 from survey.utils.type_detection import all_are
@@ -67,7 +68,7 @@ class LikertQuestionGroup(QuestionContainerMixin,
     @staticmethod
     def from_question(
             question: LikertQuestion,
-            split_by: CategoricalGroupMixin
+            split_by: CategoricalMixin
     ) -> 'LikertQuestionGroup':
         """
         Create a new LikertQuestionGroup by splitting an existing LikertQuestion

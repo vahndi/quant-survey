@@ -2,6 +2,7 @@ from typing import Dict, List, Optional
 
 from survey.mixins.containers.question_container_mixin import QuestionContainerMixin
 from survey.mixins.containers.single_type_question_container_mixin import SingleTypeQuestionContainerMixin
+from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.questions import PositiveMeasureQuestion
 from survey.utils.type_detection import all_are
 
@@ -35,6 +36,23 @@ class PositiveMeasureQuestionGroup(QuestionContainerMixin,
         Return all the Questions asked in the Survey.
         """
         return self._questions
+
+    @staticmethod
+    def from_question(
+            question: PositiveMeasureQuestion,
+            split_by: CategoricalMixin
+    ) -> 'PositiveMeasureQuestionGroup':
+        """
+        Create a new PositiveMeasureQuestionGroup by splitting an existing
+        PositiveMeasureQuestion by the values of a Categorical question or
+        attribute.
+        """
+        questions = {}
+
+        for category in split_by.category_names:
+            condition = {split_by.name: category}
+            questions[category] = question.where(**condition)
+        return PositiveMeasureQuestionGroup(questions=questions)
 
     @property
     def items(self) -> List[PositiveMeasureQuestion]:

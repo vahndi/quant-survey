@@ -8,6 +8,7 @@ class CategoricalMixin(object):
 
     _categories:  Union[List[str], Dict[str, int]]
     _ordered: bool
+    name: str
 
     def _set_categories(self, categories: Union[List[str], Dict[str, int]]):
 

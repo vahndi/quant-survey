@@ -163,7 +163,8 @@ class QuestionGroup(ItemContainerMixin,
             return QuestionGroup(items=group_items)
 
     def create_question_group(
-            self, group_name: str, item_names: Union[List[str], Dict[str, str]]
+            self, group_name: str,
+            item_names: Union[List[str], Dict[str, str]]
     ):
         """
         Add a new QuestionGroup from the named items of the Group to the Group.
@@ -180,7 +181,9 @@ class QuestionGroup(ItemContainerMixin,
         except:
             print(f'Warning - could not set dynamic group for {group}')
 
-    def add_question_group(self, group_name, group: 'QuestionGroup'):
+    def add_question_group(self,
+                           group_name: str,
+                           group: 'QuestionGroup'):
 
         if group_name in self._groups.keys():
             raise ValueError(f'Group {group_name} already exists!')

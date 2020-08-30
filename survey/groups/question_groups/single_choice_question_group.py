@@ -9,6 +9,7 @@ from survey.mixins.containers.single_category_stack_mixin import \
     SingleCategoryStackMixin
 from survey.mixins.containers.single_type_question_container_mixin import \
     SingleTypeQuestionContainerMixin
+from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.mixins.single_category_group.single_category_group_comparison_mixin import \
     SingleCategoryGroupComparisonMixin
 from survey.mixins.single_category_group.single_category_group_pt_mixin import \
@@ -65,6 +66,23 @@ class SingleChoiceQuestionGroup(QuestionContainerMixin,
         Return all the Questions asked in the Survey.
         """
         return self._questions
+
+    @staticmethod
+    def from_question(
+            question: SingleChoiceQuestion,
+            split_by: CategoricalMixin
+    ) -> 'SingleChoiceQuestionGroup':
+        """
+        Create a new SingleChoiceQuestionGroup by splitting an existing
+        SingleChoiceQuestion by the values of a Categorical question or
+        attribute.
+        """
+        questions = {}
+
+        for category in split_by.category_names:
+            condition = {split_by.name: category}
+            questions[category] = question.where(**condition)
+        return SingleChoiceQuestionGroup(questions=questions)
 
     def count(self) -> int:
         """
