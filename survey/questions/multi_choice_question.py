@@ -215,9 +215,9 @@ class MultiChoiceQuestion(
         if title is None:
             title = self.text
         if x_label is None:
-            x_label = self.name
+            x_label = self.name if not transpose else '# Respondents'
         if y_label is None:
-            y_label = '# Respondents'
+            y_label = '# Respondents' if not transpose else self.name
         if data is None:
             raise ValueError('No data!')
         if len(data) == 0:

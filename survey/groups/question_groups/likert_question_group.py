@@ -236,15 +236,17 @@ class LikertQuestionGroup(QuestionContainerMixin,
             for k in self.keys
         })
 
-    def plot_comparison(self, ax: Axes = None) -> Axes:
+    def plot_comparison(self, ax: Axes = None, **kwargs) -> Axes:
         """
         Plot a comparison between the different question ratings.
 
         :param ax: Optional matplotlib axes.
         """
         ax = ax or new_axes()
+        if 'cmap' not in kwargs:
+            kwargs['cmap'] = 'Blues'
         data = DataFrame({k: q.counts() for k, q in self.item_dict.items()})
-        heatmap(data=data, ax=ax, cmap='Blues', annot=True, fmt='d')
+        heatmap(data=data, ax=ax, annot=True, fmt='d', **kwargs)
         AxesFormatter(ax).set_text(
             x_label='Question', y_label='Rating'
         ).invert_y_axis()
