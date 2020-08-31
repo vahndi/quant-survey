@@ -84,7 +84,7 @@ class SingleCategoryAttribute(
             categories = item
         if not set(categories).issubset(self.category_names):
             raise ValueError('Items to get must be subset of categories.')
-        new_data = self._data.loc[self._data.isin(item)]
+        new_data = self._data.loc[self._data.isin(categories)]
         return SingleCategoryAttribute(
             name=self.name, text=self.text,
             categories=[c for c in self._categories if c in categories],

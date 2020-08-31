@@ -377,7 +377,7 @@ class LikertQuestion(
             categories = item
         if not set(categories).issubset(self.category_names):
             raise ValueError('Item to get must be subset of categories.')
-        new_data = self._data.loc[self._data.isin(item)]
+        new_data = self._data.loc[self._data.isin(categories)]
         return LikertQuestion(
             name=self.name, text=self.text,
             categories=OrderedDict([(k, v) for k, v in self._categories.items()
