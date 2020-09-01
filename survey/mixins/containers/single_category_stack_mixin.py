@@ -10,26 +10,33 @@ class SingleCategoryStackMixin(object):
     items: List[SingleCategoryMixin]
     item_dict: Dict[str, SingleCategoryMixin]
 
-    def stack(self, name: str,
-              drop_na: bool = True,
-              name_index: Optional[str] = None,
-              key_index: Optional[str] = None,
-              number_index: Optional[str] = None,
-              number_mappings: Optional[Union[List[str], Dict[int, str]]] = None,
-              **kwargs) -> SingleCategoryMixin:
+    def stack(
+            self, name: str,
+            drop_na: bool = True,
+            name_index: Optional[str] = None,
+            key_index: Optional[str] = None,
+            number_index: Optional[str] = None,
+            number_mappings: Optional[Union[List[str], Dict[int, str]]] = None,
+            **kwargs
+    ) -> SingleCategoryMixin:
         """
         Stack the responses to each item in the group into a new item.
 
         :param name: Name for the new item.
-        :param drop_na: Whether to drop rows where the respondent was not asked the item.
-        :param name_index: Name of a new index column to create with values corresponding to the name of the item
-                           the data comes from.
-        :param number_index: Name of a new index column to create with values corresponding to the number of the
-                             item the data comes from.
-        :param key_index: Name of a new index column to create with values corresponding to the item's
-                          key in the group.
-        :param number_mappings: List of string or dict of ints to strings to convert number index values.
-        :param kwargs: Optional new attribute values to override in the new item.
+        :param drop_na: Whether to drop rows where the respondent was not asked
+                        the item.
+        :param name_index: Name of a new index column to create with values
+                           corresponding to the name of the item the data
+                           comes from.
+        :param number_index: Name of a new index column to create with values
+                             corresponding to the number of the item the data
+                             comes from.
+        :param key_index: Name of a new index column to create with values
+                          corresponding to the item's key in the group.
+        :param number_mappings: List of string or dict of ints to strings to
+                                convert number index values.
+        :param kwargs: Optional new attribute values to override in the new
+                       item.
         """
         if name == '':
             raise ValueError('Name cannot be empty.')
@@ -58,7 +65,8 @@ class SingleCategoryStackMixin(object):
                 name_list = None
             if key_index is not None:
                 key_list = [
-                    [k for k in self.item_dict.keys() if self.item_dict[k] is item][0]
+                    [k for k in self.item_dict.keys()
+                     if self.item_dict[k] is item][0]
                 ] * len(item_data)
             else:
                 key_list = None
@@ -66,15 +74,20 @@ class SingleCategoryStackMixin(object):
                 if number_mappings is None:
                     number_list = [self.items.index(item)] * len(item_data)
                 else:
-                    number_list = [number_mappings[self.items.index(item)]] * len(item_data)
+                    number_list = [
+                        number_mappings[self.items.index(item)]
+                    ] * len(item_data)
             else:
                 number_list = None
             if name_list is None and key_list is None and number_list is None:
                 item_data.index = Index(data=index_list, name=index_names[0])
             else:
-                index_tuples = list(zip(*[ix_list
-                                          for ix_list in [index_list, name_list, key_list, number_list]
-                                          if ix_list is not None]))
+                index_tuples = list(
+                    zip(*[ix_list
+                          for ix_list in [index_list, name_list,
+                                          key_list, number_list]
+                          if ix_list is not None])
+                )
                 item_data.index = MultiIndex.from_tuples(
                     tuples=index_tuples, names=index_names
                 )

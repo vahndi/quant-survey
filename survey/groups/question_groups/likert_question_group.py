@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from itertools import product
 from typing import Dict, Optional, List, Any, Tuple, Union
 
 from matplotlib.figure import Figure
@@ -68,17 +69,16 @@ class LikertQuestionGroup(QuestionContainerMixin,
     @staticmethod
     def from_question(
             question: LikertQuestion,
-            split_by: CategoricalMixin
+            split_by: Union[CategoricalMixin, List[CategoricalMixin]]
     ) -> 'LikertQuestionGroup':
         """
         Create a new LikertQuestionGroup by splitting an existing LikertQuestion
         by the values of a Categorical question or attribute.
         """
-        questions = {}
-
-        for category in split_by.category_names:
-            condition = {split_by.name: category}
-            questions[category] = question.where(**condition)
+        questions = SingleTypeQuestionContainerMixin.split_question(
+            question=question,
+            split_by=split_by
+        )
         return LikertQuestionGroup(questions=questions)
 
     # region statistics
@@ -313,9 +313,17 @@ class LikertQuestionGroup(QuestionContainerMixin,
         if self.categories is None:
             return None
         category_order = list(self.categories.keys())
-        data = self.data.apply(value_counts)
-        data = data.transpose()
-        data = data.fillna(0).astype(int)
-        data.index.name = 'question'
+        records = []
+        for key, question in self._item_dict.items():
+            record = {
+                'key': key,
+                'text': question.text,
+                'name': question.name
+            }
+            record = {**record, **question.counts().to_dict()}
+            records.append(record)
+        data = DataFrame(records)
+        data = data.set_index(['key', 'text', 'name']).fillna(0).astype(int)
+        data = data.reindex(columns=category_order)
 
-        return data[category_order]
+        return data

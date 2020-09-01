@@ -5,7 +5,7 @@ from tests.test_survey_creators.utils import get_surveys_dir
 
 def test_alpha_hq_metadata():
 
-    fp = get_surveys_dir('alpha_hq') / 'Humana_The_DEC_69_data.csv'
+    fp = get_surveys_dir('alpha_hq') / 'test_69_data.csv'
     metadata = AlphaHQMetadata(fp)
     info = metadata.header_info()
     uniques = metadata.unique_answers()
@@ -23,7 +23,8 @@ def test_focus_vision_metadata():
 
 def test_qualtrics_metadata():
 
-    fp = get_surveys_dir('qualtrics') / f'Deliveroo_Kit_ENGLISH_AUSTRALIA_May+5,+2019_18.36.csv'
+    fp = get_surveys_dir('qualtrics') / f'test_Kit_ENGLISH_AUSTRALIA_May+5,' \
+                                        f'+2019_18.36.csv'
     metadata = QualtricsMetadata(fp)
     info = metadata.header_info()
     uniques = metadata.unique_answers()
@@ -32,7 +33,8 @@ def test_qualtrics_metadata():
 
 def test_usability_hub_metadata():
 
-    fp = get_surveys_dir('usability_hub') / f'WMAP Demo Survey-results_cleaned.csv'
+    fp = get_surveys_dir('usability_hub') / f'test Demo ' \
+                                            f'Survey-results_cleaned.csv'
     metadata = UsabilityHubMetadata(fp)
     info = metadata.header_info()
     uniques = metadata.unique_answers()

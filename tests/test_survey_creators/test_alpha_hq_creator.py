@@ -9,7 +9,7 @@ from tests.test_survey_creators.utils import get_surveys_dir, get_metadata_path
 
 def create_survey(survey_number: int) -> Survey:
 
-    survey_path = get_surveys_dir('alpha_hq') / f'Humana_The_DEC_{survey_number}_data.csv'
+    survey_path = get_surveys_dir('alpha_hq') / f'test_{survey_number}_data.csv'
     creator = AlphaHQCreator(
         survey_name='survey_{survey_number}',
         survey_data_fn=survey_path,

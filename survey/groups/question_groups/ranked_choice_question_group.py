@@ -54,11 +54,10 @@ class RankedChoiceQuestionGroup(QuestionContainerMixin,
         RankedChoiceQuestion by the values of a Categorical question or
         attribute.
         """
-        questions = {}
-
-        for category in split_by.category_names:
-            condition = {split_by.name: category}
-            questions[category] = question.where(**condition)
+        questions = SingleTypeQuestionContainerMixin.split_question(
+            question=question,
+            split_by=split_by
+        )
         return RankedChoiceQuestionGroup(questions=questions)
 
     @property

@@ -51,11 +51,10 @@ class PositiveMeasureQuestionGroup(QuestionContainerMixin,
         PositiveMeasureQuestion by the values of a Categorical question or
         attribute.
         """
-        questions = {}
-
-        for category in split_by.category_names:
-            condition = {split_by.name: category}
-            questions[category] = question.where(**condition)
+        questions = SingleTypeQuestionContainerMixin.split_question(
+            question=question,
+            split_by=split_by
+        )
         return PositiveMeasureQuestionGroup(questions=questions)
 
     @property
