@@ -23,7 +23,11 @@ class AttributeGroup(ItemContainerMixin, AttributeContainerMixin, object):
     """
     A group of Attributes and / or AttributeGroups.
     """
-    def __init__(self, items: Dict[str, Union[RespondentAttribute, 'AttributeGroup']] = None):
+    def __init__(
+            self,
+            items: Dict[str,
+                        Union[RespondentAttribute, 'AttributeGroup']] = None
+    ):
         """
         Create a new AttributeGroup.
 
@@ -33,7 +37,9 @@ class AttributeGroup(ItemContainerMixin, AttributeContainerMixin, object):
                             if isinstance(a, RespondentAttribute)]
         self._groups = {name: group for name, group in items.items()
                         if isinstance(group, AttributeContainerMixin)}
-        self._item_dict: Dict[str, Union[RespondentAttribute, 'AttributeGroup']] = items
+        self._item_dict: Dict[
+            str, Union[RespondentAttribute, 'AttributeGroup']
+        ] = items
         for property_name, attribute in items.items():
             try:
                 setattr(self, property_name, attribute)

@@ -1,4 +1,6 @@
 from itertools import product
+from typing import List, Optional, Dict, Tuple, Union, TYPE_CHECKING
+
 from matplotlib.axes import Axes
 from matplotlib.patches import Patch
 from mpl_format.axes.axes_formatter import AxesFormatter
@@ -6,8 +8,7 @@ from mpl_format.axes.axis_utils import new_axes
 from mpl_format.text.text_utils import wrap_text, map_text
 from numpy import nan
 from pandas import Series, DataFrame, pivot_table, concat, isnull, notnull
-from probability.distributions import BetaBinomial, BetaBinomialConjugate
-from typing import List, Optional, Dict, Tuple, Union, TYPE_CHECKING
+from probability.distributions import BetaBinomialConjugate
 
 from survey.constants import CATEGORY_SPLITTER
 from survey.mixins.data import DataMixin

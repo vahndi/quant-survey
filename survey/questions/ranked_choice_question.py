@@ -1,12 +1,12 @@
 from itertools import product
+from typing import List, Optional, Dict, Tuple
+
 from matplotlib.axes import Axes
 from mpl_format.axes.axes_formatter import AxesFormatter
-from mpl_format.axes.axis_utils import new_axes
 from mpl_format.text.text_utils import map_text, wrap_text
 from pandas import Series, isnull, DataFrame, pivot_table, notnull
-from probability.distributions import BetaBinomial, BetaBinomialConjugate
+from probability.distributions import BetaBinomialConjugate
 from seaborn import heatmap
-from typing import List, Optional, Dict, Tuple
 
 from survey.constants import CATEGORY_SPLITTER
 from survey.mixins.data import DataMixin

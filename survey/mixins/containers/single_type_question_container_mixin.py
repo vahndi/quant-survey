@@ -9,8 +9,9 @@ class SingleTypeQuestionContainerMixin(object):
 
     def where(self, **kwargs):
         """
-        Return a new QuestionContainerMixin with questions containing only the responses for users where the filtering conditions
-        are met. See FilterableMixin.where() for further documentation.
+        Return a new QuestionContainerMixin with questions containing only the
+        responses for users where the filtering conditions are met.
+        See FilterableMixin.where() for further documentation.
         """
         constructor = type(self)
         return constructor(questions={

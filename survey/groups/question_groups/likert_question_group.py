@@ -222,7 +222,9 @@ class LikertQuestionGroup(QuestionContainerMixin,
                   f'for Question: {index}')
         self._questions.append(value)
 
-    def merge_with(self, other: 'LikertQuestionGroup') -> 'LikertQuestionGroup':
+    def merge_with(
+            self, other: 'LikertQuestionGroup'
+    ) -> 'LikertQuestionGroup':
         """
         Merge the questions in this group with those in the other.
 

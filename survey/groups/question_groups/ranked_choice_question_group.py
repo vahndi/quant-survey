@@ -1,8 +1,10 @@
 from typing import Dict, List, Optional
 
 from survey.mixins.categorical_group_mixin import CategoricalGroupMixin
-from survey.mixins.containers.question_container_mixin import QuestionContainerMixin
-from survey.mixins.containers.single_type_question_container_mixin import SingleTypeQuestionContainerMixin
+from survey.mixins.containers.question_container_mixin import \
+    QuestionContainerMixin
+from survey.mixins.containers.single_type_question_container_mixin import \
+    SingleTypeQuestionContainerMixin
 from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.questions import RankedChoiceQuestion
 from survey.utils.type_detection import all_are
@@ -17,14 +19,16 @@ class RankedChoiceQuestionGroup(QuestionContainerMixin,
 
         if not all_are(questions.values(), RankedChoiceQuestion):
             raise TypeError('Not all attributes are RankedChoiceQuestions.')
-        self._questions: List[RankedChoiceQuestion] = [q for q in questions.values()]
+        self._questions: List[RankedChoiceQuestion] = [
+            q for q in questions.values()]
         self._set_categories()
         self._item_dict: Dict[str, RankedChoiceQuestion] = questions
         for property_name, question in questions.items():
             try:
                 setattr(self, property_name, question)
             except:
-                print(f'Warning - could not set dynamic property for Question: {question}')
+                print(f'Warning - could not set dynamic property'
+                      f' for Question: {question}')
 
     def question(self, name: str) -> Optional[RankedChoiceQuestion]:
         """
@@ -80,5 +84,6 @@ class RankedChoiceQuestionGroup(QuestionContainerMixin,
         try:
             setattr(self, index, value)
         except:
-            print(f'Warning - could not set dynamic property for Question: {index}')
+            print(f'Warning - could not set dynamic property'
+                  f' for Question: {index}')
         self._questions.append(value)

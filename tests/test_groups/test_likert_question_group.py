@@ -6,7 +6,8 @@ from random import seed, choices
 
 from pandas import Series
 
-from survey.groups.question_groups.likert_question_group import LikertQuestionGroup
+from survey.groups.question_groups.likert_question_group import \
+    LikertQuestionGroup
 from survey.questions import LikertQuestion
 
 

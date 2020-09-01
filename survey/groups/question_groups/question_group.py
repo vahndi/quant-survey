@@ -3,21 +3,34 @@ from typing import Dict, Union, List, Iterator, Optional, Set, Any
 
 from pandas import Series
 
-from survey.custom_types import CategoricalQuestion, CategoricalQuestionTypes, NumericalQuestionTypes, NumericalQuestion
-from survey.groups.question_groups.categorical_question_group import CategoricalQuestionGroup
-from survey.groups.question_groups.count_question_group import CountQuestionGroup
-from survey.groups.question_groups.free_text_question_group import FreeTextQuestionGroup
-from survey.groups.question_groups.likert_question_group import LikertQuestionGroup
-from survey.groups.question_groups.multi_choice_question_group import MultiChoiceQuestionGroup
-from survey.groups.question_groups.numerical_question_group import NumericalQuestionGroup
-from survey.groups.question_groups.positive_measure_question_group import PositiveMeasureQuestionGroup
-from survey.groups.question_groups.ranked_choice_question_group import RankedChoiceQuestionGroup
-from survey.groups.question_groups.single_choice_question_group import SingleChoiceQuestionGroup
-from survey.mixins.containers.attribute_container_mixin import AttributeContainerMixin
+from survey.custom_types import CategoricalQuestion, CategoricalQuestionTypes, \
+    NumericalQuestionTypes, NumericalQuestion
+from survey.groups.question_groups.categorical_question_group import \
+    CategoricalQuestionGroup
+from survey.groups.question_groups.count_question_group import \
+    CountQuestionGroup
+from survey.groups.question_groups.free_text_question_group import \
+    FreeTextQuestionGroup
+from survey.groups.question_groups.likert_question_group import \
+    LikertQuestionGroup
+from survey.groups.question_groups.multi_choice_question_group import \
+    MultiChoiceQuestionGroup
+from survey.groups.question_groups.numerical_question_group import \
+    NumericalQuestionGroup
+from survey.groups.question_groups.positive_measure_question_group import \
+    PositiveMeasureQuestionGroup
+from survey.groups.question_groups.ranked_choice_question_group import \
+    RankedChoiceQuestionGroup
+from survey.groups.question_groups.single_choice_question_group import \
+    SingleChoiceQuestionGroup
+from survey.mixins.containers.attribute_container_mixin import \
+    AttributeContainerMixin
 from survey.mixins.containers.item_container_mixin import ItemContainerMixin
-from survey.mixins.containers.question_container_mixin import QuestionContainerMixin
-from survey.questions import CountQuestion, FreeTextQuestion, LikertQuestion, MultiChoiceQuestion, \
-    RankedChoiceQuestion, PositiveMeasureQuestion, SingleChoiceQuestion
+from survey.mixins.containers.question_container_mixin import \
+    QuestionContainerMixin
+from survey.questions import CountQuestion, FreeTextQuestion, LikertQuestion, \
+    MultiChoiceQuestion, RankedChoiceQuestion, PositiveMeasureQuestion, \
+    SingleChoiceQuestion
 from survey.questions._abstract.question import Question
 from survey.respondents import Respondent
 from survey.utils.type_detection import all_are
@@ -137,7 +150,8 @@ class QuestionGroup(ItemContainerMixin,
             item = self._find_item(name)
             if not (isinstance(item, Question) or
                     isinstance(item, QuestionContainerMixin)):
-                raise TypeError(f'Item {item} is not a Question or QuestionGroup.')
+                raise TypeError(
+                    f'Item {item} is not a Question or QuestionGroup.')
             if isinstance(names, list):
                 group_items[name] = item
             elif isinstance(names, dict):
@@ -472,7 +486,9 @@ class QuestionGroup(ItemContainerMixin,
         ):
             return self._groups[group_name]
 
-    def free_text_group(self, group_name: str) -> Optional[FreeTextQuestionGroup]:
+    def free_text_group(
+            self, group_name: str
+    ) -> Optional[FreeTextQuestionGroup]:
 
         if (
                 group_name in self._groups.keys() and
@@ -488,7 +504,9 @@ class QuestionGroup(ItemContainerMixin,
         ):
             return self._groups[group_name]
 
-    def multi_choice_group(self, group_name: str) -> Optional[MultiChoiceQuestionGroup]:
+    def multi_choice_group(
+            self, group_name: str
+    ) -> Optional[MultiChoiceQuestionGroup]:
 
         if (
                 group_name in self._groups.keys() and
@@ -496,7 +514,9 @@ class QuestionGroup(ItemContainerMixin,
         ):
             return self._groups[group_name]
 
-    def numerical_group(self, group_name: str) -> Optional[NumericalQuestionGroup]:
+    def numerical_group(
+            self, group_name: str
+    ) -> Optional[NumericalQuestionGroup]:
 
         if (
                 group_name in self._groups.keys() and
@@ -504,15 +524,20 @@ class QuestionGroup(ItemContainerMixin,
         ):
             return self._groups[group_name]
 
-    def positive_measure_group(self, group_name: str) -> Optional[PositiveMeasureQuestionGroup]:
+    def positive_measure_group(
+            self, group_name: str
+    ) -> Optional[PositiveMeasureQuestionGroup]:
 
         if (
                 group_name in self._groups.keys() and
-                isinstance(self._groups[group_name], PositiveMeasureQuestionGroup)
+                isinstance(self._groups[group_name],
+                           PositiveMeasureQuestionGroup)
         ):
             return self._groups[group_name]
 
-    def ranked_choice_group(self, group_name: str) -> Optional[RankedChoiceQuestionGroup]:
+    def ranked_choice_group(
+            self, group_name: str
+    ) -> Optional[RankedChoiceQuestionGroup]:
 
         if (
                 group_name in self._groups.keys() and
@@ -520,7 +545,9 @@ class QuestionGroup(ItemContainerMixin,
         ):
             return self._groups[group_name]
 
-    def single_choice_group(self, group_name: str) -> Optional[SingleChoiceQuestionGroup]:
+    def single_choice_group(
+            self, group_name: str
+    ) -> Optional[SingleChoiceQuestionGroup]:
 
         if (
                 group_name in self._groups.keys() and
