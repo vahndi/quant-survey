@@ -50,7 +50,7 @@ class MultiChoiceQuestionGroup(QuestionContainerMixin,
         return self._questions
 
     @staticmethod
-    def from_question(
+    def split_question(
             question: MultiChoiceQuestion,
             split_by: CategoricalMixin
     ) -> 'MultiChoiceQuestionGroup':
@@ -59,7 +59,7 @@ class MultiChoiceQuestionGroup(QuestionContainerMixin,
         MultiChoiceQuestion by the values of a Categorical question or
         attribute.
         """
-        questions = SingleTypeQuestionContainerMixin.split_question(
+        questions = SingleTypeQuestionContainerMixin._split_question(
             question=question,
             split_by=split_by
         )

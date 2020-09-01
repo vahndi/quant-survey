@@ -41,7 +41,7 @@ class CountQuestionGroup(QuestionContainerMixin,
         return self._questions
 
     @staticmethod
-    def from_question(
+    def split_question(
             question: CountQuestion,
             split_by: CategoricalMixin
     ) -> 'CountQuestionGroup':
@@ -49,7 +49,7 @@ class CountQuestionGroup(QuestionContainerMixin,
         Create a new CountQuestionGroup by splitting an existing CountQuestion
         by the values of a Categorical question or attribute.
         """
-        questions = SingleTypeQuestionContainerMixin.split_question(
+        questions = SingleTypeQuestionContainerMixin._split_question(
             question=question,
             split_by=split_by
         )

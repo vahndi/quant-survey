@@ -1,16 +1,16 @@
 from collections import OrderedDict
-from itertools import product
-from typing import Dict, Optional, List, Any, Tuple, Union
+from typing import Dict, Optional, List, Any, Tuple, Union, Callable
 
 from matplotlib.figure import Figure
 from mpl_format.axes.axes_formatter import AxesFormatter
 from mpl_format.axes.axis_utils import new_axes
 from mpl_format.figures.figure_formatter import FigureFormatter
 from mpl_toolkits.axes_grid1.mpl_axes import Axes
-from pandas import Series, DataFrame, pivot_table, concat, value_counts
+from pandas import Series, DataFrame, pivot_table, concat
 from probability.distributions import BetaBinomialConjugate
 from seaborn import heatmap
 
+from survey.compound_types import StringOrStringTuple
 from survey.mixins.categorical_group_mixin import CategoricalGroupMixin
 from survey.mixins.containers.question_container_mixin import \
     QuestionContainerMixin
@@ -67,7 +67,7 @@ class LikertQuestionGroup(QuestionContainerMixin,
         return self._questions
 
     @staticmethod
-    def from_question(
+    def split_question(
             question: LikertQuestion,
             split_by: Union[CategoricalMixin, List[CategoricalMixin]]
     ) -> 'LikertQuestionGroup':
@@ -75,11 +75,53 @@ class LikertQuestionGroup(QuestionContainerMixin,
         Create a new LikertQuestionGroup by splitting an existing LikertQuestion
         by the values of a Categorical question or attribute.
         """
-        questions = SingleTypeQuestionContainerMixin.split_question(
+        questions = SingleTypeQuestionContainerMixin._split_question(
             question=question,
             split_by=split_by
         )
         return LikertQuestionGroup(questions=questions)
+
+    def split_by_key(
+            self,
+            splitter: Callable[[StringOrStringTuple],
+                               Optional[StringOrStringTuple]],
+            renamer: Optional[
+                Callable[[StringOrStringTuple],
+                         StringOrStringTuple]
+            ] = None
+    ) -> Dict[StringOrStringTuple, 'LikertQuestionGroup']:
+        """
+        Split the group into a dictionary of new LikertQuestionGroups.
+
+        :param splitter: Callable that takes the key of each question and
+                         returns a new key. Each question that returns the
+                         same new key will be placed into the same group.
+                         This new key will be the key of the group in the
+                         returned dict.
+        :param renamer: Optional Callable to provide a new name for each key.
+        """
+        split_dict = self._split_by_key(
+            splitter=splitter, renamer=renamer
+        )
+        return {
+            new_key: LikertQuestionGroup(questions=split_dict[new_key])
+            for new_key in split_dict.keys()
+        }
+
+    def map_keys(
+            self,
+            mapper: Callable[[StringOrStringTuple], StringOrStringTuple]
+    ):
+        """
+        Return a new LikertQuestionGroup with keys mapped using mapper.
+
+        :param mapper: Callable to map existing keys to new keys.
+        """
+        return LikertQuestionGroup({
+            mapper(key): question
+            for key, question in self._item_dict.items()
+        })
+
 
     # region statistics
 

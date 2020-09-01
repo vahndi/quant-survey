@@ -45,7 +45,7 @@ class RankedChoiceQuestionGroup(QuestionContainerMixin,
         return self._questions
 
     @staticmethod
-    def from_question(
+    def split_question(
             question: RankedChoiceQuestion,
             split_by: CategoricalMixin
     ) -> 'RankedChoiceQuestionGroup':
@@ -54,7 +54,7 @@ class RankedChoiceQuestionGroup(QuestionContainerMixin,
         RankedChoiceQuestion by the values of a Categorical question or
         attribute.
         """
-        questions = SingleTypeQuestionContainerMixin.split_question(
+        questions = SingleTypeQuestionContainerMixin._split_question(
             question=question,
             split_by=split_by
         )

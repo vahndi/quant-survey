@@ -1,6 +1,7 @@
 from itertools import product
-from typing import Dict, List, Optional, Any, Union, Tuple
+from typing import Dict, List, Optional, Any, Union, Tuple, Callable
 
+from survey.compound_types import StringOrStringTuple
 from survey.questions._abstract.question import Question
 
 
@@ -35,7 +36,7 @@ class SingleTypeQuestionContainerMixin(object):
         return None
 
     @staticmethod
-    def split_question(
+    def _split_question(
             question: Any, split_by: Union[Any, List[Any]]
     ) -> Dict[Union[str, Tuple[str, ...]], Any]:
         """
@@ -59,3 +60,35 @@ class SingleTypeQuestionContainerMixin(object):
                 questions[tuple(category_combo)] = question.where(**conditions)
 
         return questions
+
+    def _split_by_key(
+            self,
+            splitter: Callable[[StringOrStringTuple],
+                               Optional[StringOrStringTuple]],
+            renamer: Optional[
+                Callable[[StringOrStringTuple],
+                         StringOrStringTuple]
+            ] = None
+    ) -> Dict[StringOrStringTuple, Dict[StringOrStringTuple, Any]]:
+        """
+        Split the group into a dictionary of new questions.
+
+        :param splitter: Callable that takes the key of each question and
+                         returns a new key. Each question that returns the
+                         same new key will be placed into the same group.
+                         This new key will be the key of the group in the
+                         returned dict.
+        :param renamer: Optional Callable to provide a new name for each key.
+        """
+        split_dict = {}
+        for question_key, question in self._item_dict.items():
+            group_key = splitter(question_key)
+            if group_key is None:
+                continue
+            if group_key not in split_dict.keys():
+                split_dict[group_key] = {}
+            if renamer is not None:
+                question_key = renamer(question_key)
+            split_dict[group_key][question_key] = question
+
+        return split_dict

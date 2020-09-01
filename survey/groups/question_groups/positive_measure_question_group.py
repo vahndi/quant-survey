@@ -42,7 +42,7 @@ class PositiveMeasureQuestionGroup(QuestionContainerMixin,
         return self._questions
 
     @staticmethod
-    def from_question(
+    def split_question(
             question: PositiveMeasureQuestion,
             split_by: CategoricalMixin
     ) -> 'PositiveMeasureQuestionGroup':
@@ -51,7 +51,7 @@ class PositiveMeasureQuestionGroup(QuestionContainerMixin,
         PositiveMeasureQuestion by the values of a Categorical question or
         attribute.
         """
-        questions = SingleTypeQuestionContainerMixin.split_question(
+        questions = SingleTypeQuestionContainerMixin._split_question(
             question=question,
             split_by=split_by
         )

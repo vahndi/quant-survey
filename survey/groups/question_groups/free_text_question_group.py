@@ -42,7 +42,7 @@ class FreeTextQuestionGroup(QuestionContainerMixin,
         return self._questions
 
     @staticmethod
-    def from_question(
+    def split_question(
             question: FreeTextQuestion,
             split_by: CategoricalMixin
     ) -> 'FreeTextQuestionGroup':
@@ -50,7 +50,7 @@ class FreeTextQuestionGroup(QuestionContainerMixin,
         Create a new FreeTextQuestionGroup by splitting an existing
         FreeTextQuestion by the values of a Categorical question or attribute.
         """
-        questions = SingleTypeQuestionContainerMixin.split_question(
+        questions = SingleTypeQuestionContainerMixin._split_question(
             question=question,
             split_by=split_by
         )
