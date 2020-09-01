@@ -11,7 +11,8 @@ def sort_data_frame_values(data: DataFrame, sort_by: Union[List, Callable, str],
     Extension to pandas sort_values method that allows lambda functions.
 
     :param data: DataFrame to sort_values.
-    :param sort_by: str or lambda or list of strs and/or lambdas e.g. lambda d: d['1'] + d['2']
+    :param sort_by: str or lambda or list of strs and/or lambdas
+                    e.g. lambda d: d['1'] + d['2']
     :param ascending: Whether to sort ascending or descending
     """
     if type(sort_by) is str or callable(sort_by):
@@ -28,10 +29,12 @@ def sort_data_frame_values(data: DataFrame, sort_by: Union[List, Callable, str],
     return data
 
 
-def count_coincidences(data_1: Union[DataFrame, Series],
-                       data_2: Union[DataFrame, Series],
-                       column_1: str, column_2: str,
-                       column_1_order: List[str], column_2_order: List[str]) -> DataFrame:
+def count_coincidences(
+        data_1: Union[DataFrame, Series],
+        data_2: Union[DataFrame, Series],
+        column_1: str, column_2: str,
+        column_1_order: List[str], column_2_order: List[str]
+) -> DataFrame:
     """
     Count the number of times each value of column 1 appears with each value of
     column 2.
@@ -48,8 +51,13 @@ def count_coincidences(data_1: Union[DataFrame, Series],
     data_1 = data_1.copy()
     data_2 = data_2.copy()
     # validate inputs
-    if isinstance(data_1, Series) and isinstance(data_2, Series) and data_1.name == data_2.name:
-        raise ValueError('data_1 and data_2 must have different names if they are both Series')
+    if (
+            isinstance(data_1, Series) and
+            isinstance(data_2, Series) and
+            data_1.name == data_2.name
+    ):
+        raise ValueError('data_1 and data_2 must have different names'
+                         ' if they are both Series')
     is_multi_1 = isinstance(data_1.index, MultiIndex)
     is_multi_2 = isinstance(data_2.index, MultiIndex)
     if isinstance(data_1, DataFrame):
@@ -60,7 +68,9 @@ def count_coincidences(data_1: Union[DataFrame, Series],
             raise ValueError('data_1 must be named')
         if is_multi_1:
             if None in data_1.index.names:
-                raise ValueError('each index in data_1 MultiIndex must be named')
+                raise ValueError(
+                    'each index in data_1 MultiIndex must be named'
+                )
         else:
             if data_1.index.name is None:
                 raise ValueError('data_1 index must be named')
@@ -74,7 +84,9 @@ def count_coincidences(data_1: Union[DataFrame, Series],
             raise ValueError('data_1 must be named')
         if is_multi_2:
             if None in data_2.index.names:
-                raise ValueError('each index in data_2 MultiIndex must be named')
+                raise ValueError(
+                    'each index in data_2 MultiIndex must be named'
+                )
         else:
             if data_2.index.name is None:
                 raise ValueError('data_2 index must be named')
@@ -84,17 +96,26 @@ def count_coincidences(data_1: Union[DataFrame, Series],
     # drop indexes
     if is_multi_1 and is_multi_2:
         if set(data_1.index.names) != set(data_2.index.names):
-            raise ValueError(f'MultiIndexes for "{data_1.name}" and "{data_2.name}" must have the same names')
+            raise ValueError(
+                f'MultiIndexes for "{data_1.name}" and "{data_2.name}"'
+                f' must have the same names'
+            )
     elif not is_multi_1 and is_multi_2:
         if not {data_1.index.name}.issubset(data_2.index.names):
-            raise ValueError(f'Index name for "{data_1.name}" must be one of MultiIndex names for "{data_2.name}"')
+            raise ValueError(
+                f'Index name for "{data_1.name}" must be one of '
+                f'MultiIndex names for "{data_2.name}"'
+            )
         # drop redundant indexes for data_2
         for index_name in data_2.index.names:
             if index_name != data_1.index.name:
                 data_2.index = data_2.index.droplevel(index_name)
     elif is_multi_1 and not is_multi_2:
         if not {data_2.index.name}.issubset(data_1.index.names):
-            raise ValueError(f'Index name for "{data_2.name}" must be one of MultiIndex names for "{data_1.name}"')
+            raise ValueError(
+                f'Index name for "{data_2.name}" must be one of '
+                f'MultiIndex names for "{data_1.name}"'
+            )
         # drop redundant indexes for data_1
         for index_name in data_1.index.names:
             if index_name != data_2.index.name:
@@ -102,16 +123,27 @@ def count_coincidences(data_1: Union[DataFrame, Series],
         pass
     else:  # not is_multi_1 and not is_multi_2
         if not data_1.index.name == data_2.index.name:
-            raise ValueError(f'Index names for "{data_1.name}" and "{data_2.name}" must be identical')
+            raise ValueError(
+                f'Index names for "{data_1.name}" and "{data_2.name}"'
+                f' must be identical'
+            )
 
     # count coincidences
     data = merge(left=data_1, right=data_2, how='outer',
                  left_index=True, right_index=True)
-    datas_1: List[Series] = [data_1] if isinstance(data_1, Series) else [data_1[col] for col in data_1.columns]
-    datas_2: List[Series] = [data_2] if isinstance(data_2, Series) else [data_2[col] for col in data_2.columns]
+    datas_1: List[Series] = (
+        [data_1] if isinstance(data_1, Series)
+        else [data_1[col] for col in data_1.columns]
+    )
+    datas_2: List[Series] = (
+        [data_2] if isinstance(data_2, Series)
+        else [data_2[col] for col in data_2.columns]
+    )
     cp_lists = []
     for d1, d2 in product(datas_1, datas_2):
-        cp_list = data[[d1.name, d2.name]].groupby([d1.name, d2.name]).size().reset_index()
+        cp_list = data[[
+            d1.name, d2.name
+        ]].groupby([d1.name, d2.name]).size().reset_index()
         cp_list.columns = [column_1, column_2, 'count']
         cp_lists.append(cp_list)
     cp_table = pivot_table(

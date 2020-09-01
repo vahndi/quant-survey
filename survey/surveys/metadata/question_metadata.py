@@ -13,16 +13,24 @@ class QuestionMetadata(Metadata):
         """
         Create a new QuestionMetadata.
 
-        :param name: Name of the question - should be a valid python variables name.
+        :param name: Name of the question - should be a valid python variable
+                     name.
         :param text: The actual text of the question asked.
-        :param type_name: The type of the question. One of `['Count', 'FreeText', 'Likert',
-                          'MultiChoice', 'PositiveMeasure', 'RankedChoice', 'SingleChoice']`
-        :param ordered: For Likert, SingleChoice and MultiChoice questions, whether the answers are in a specific order.
-        :param expression: Optional regular expression for matching multiple columns for the same question,
-                           or for matching single columns that need renaming.
-        :param loop_variables: A list of variables over which the original question has been looped, this metadata
-                              instance representing the metadata for one of the loop instances.
-        :param loop_expression: Regular expression for matching the particular loop instance for a given question.
+        :param type_name: The type of the question.
+                          One of `['Count', 'FreeText', 'Likert',
+                          'MultiChoice', 'PositiveMeasure', 'RankedChoice',
+                          'SingleChoice']`
+        :param ordered: For Likert, SingleChoice and MultiChoice questions,
+                        whether the answers are in a specific order.
+        :param expression: Optional regular expression for matching multiple
+                           columns for the same question, or for matching
+                           single columns that need renaming.
+        :param loop_variables: A list of variables over which the original
+                               question has been looped, this metadata
+                               instance representing the metadata for one of the
+                               loop instances.
+        :param loop_expression: Regular expression for matching the particular
+                                loop instance for a given question.
         """
         self.name = name
         self.text = text
@@ -37,7 +45,8 @@ class QuestionMetadata(Metadata):
         """
         Create a list of QuestionMetadata's from a pandas DataFrame
 
-        :param data: DataFrame containing columns with the names of QuestionMetadata attributes.
+        :param data: DataFrame containing columns with the names of
+                     QuestionMetadata attributes.
         """
         question_metadatas: List[QuestionMetadata] = []
         for _, row in data.iterrows():
@@ -50,7 +59,10 @@ class QuestionMetadata(Metadata):
                 init_dict['expression'] = row['expression']
             if 'loop_expression' in row.keys():
                 init_dict['loop_expression'] = row['loop_expression']
-            if 'loop_variables' in row.keys() and notnull(row['loop_variables']):
+            if (
+                    'loop_variables' in row.keys() and
+                    notnull(row['loop_variables'])
+            ):
                 init_dict['loop_variables'] = row['loop_variables'].split('\n')
             question_metadatas.append(QuestionMetadata(**init_dict))
         return question_metadatas

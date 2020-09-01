@@ -1,8 +1,10 @@
 from typing import Dict, List, Optional
 
 from survey.attributes import CountAttribute
-from survey.mixins.containers.attribute_container_mixin import AttributeContainerMixin
-from survey.mixins.containers.single_type_attribute_container_mixin import SingleTypeAttributeContainerMixin
+from survey.mixins.containers.attribute_container_mixin import \
+    AttributeContainerMixin
+from survey.mixins.containers.single_type_attribute_container_mixin import \
+    SingleTypeAttributeContainerMixin
 from survey.utils.type_detection import all_are
 
 
@@ -14,13 +16,16 @@ class CountAttributeGroup(AttributeContainerMixin,
 
         if not all_are(attributes.values(), CountAttribute):
             raise TypeError('Not all attributes are CountAttributes.')
-        self._attributes: List[CountAttribute] = [a for a in attributes.values()]
+        self._attributes: List[CountAttribute] = [
+            a for a in attributes.values()
+        ]
         self._item_dict: Dict[str, CountAttribute] = attributes
         for property_name, attribute in attributes.items():
             try:
                 setattr(self, property_name, attribute)
             except:
-                print(f'Warning - could not set dynamic property for Attribute: {attribute}')
+                print(f'Warning - could not set dynamic property'
+                      f' for Attribute: {attribute}')
 
     def attribute(self, name: str) -> Optional[CountAttribute]:
         """
@@ -59,5 +64,6 @@ class CountAttributeGroup(AttributeContainerMixin,
         try:
             setattr(self, index, value)
         except:
-            print(f'Warning - could not set dynamic property for Question: {index}')
+            print(f'Warning - could not set dynamic property'
+                  f' for Question: {index}')
         self._attributes.append(value)

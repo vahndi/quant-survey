@@ -10,7 +10,8 @@ class JPT(object):
     """
     Represents a Conditional Probability Table of 2 variables.
     """
-    def __init__(self, prob_1: SingleCategoryMixin, prob_2: SingleCategoryMixin):
+    def __init__(self, prob_1: SingleCategoryMixin,
+                 prob_2: SingleCategoryMixin):
 
         self._prob_1 = prob_1
         self._prob_2 = prob_2

@@ -11,13 +11,17 @@ def create_cpt(prob_data: Union[DataFrame, Series],
     """
     Return a conditional probability table.
 
-    :param prob_data: The Series or DataFrame containing the data to find the probability of.
-    :param cond_data: The Series or DataFrame containing the data to condition on.
-    :param prob_name: The name of the question or attribute to find probability of.
+    :param prob_data: The Series or DataFrame containing the data to find the
+                      probability of.
+    :param cond_data: The Series or DataFrame containing the data to condition
+                      on.
+    :param prob_name: The name of the question or attribute to find probability
+                      of.
     :param cond_name: The name of the question or attribute to condition on.
     :param prob_order: List of labels to order the probability values.
     :param cond_order: List of labels to order the conditioning values.
-    :return: DataFrame of conditional probabilities with Index of `condition` and columns of `probability`.
+    :return: DataFrame of conditional probabilities with Index of `condition`
+             and columns of `probability`.
     """
     if prob_name == cond_name:
         raise ValueError('prob_name must be different to cond_name')
@@ -42,13 +46,18 @@ def create_jpt(data_1: Union[DataFrame, Series],
     """
     Return a joint probability table.
 
-    :param data_1: The DataFrame or Series containing the data for the first distribution.
-    :param data_2: The DataFrame or Series containing the data for the second distribution.
-    :param prob_1_name: The name of the first question or attribute to find probability of.
-    :param prob_2_name: The name of the second question or attribute to find probability of.
+    :param data_1: The DataFrame or Series containing the data for the first
+                   distribution.
+    :param data_2: The DataFrame or Series containing the data for the second
+                   distribution.
+    :param prob_1_name: The name of the first question or attribute to find
+                        probability of.
+    :param prob_2_name: The name of the second question or attribute to find
+                        probability of.
     :param prob_1_order: List of labels to order the probability values.
     :param prob_2_order: List of labels to order the conditioning values.
-    :return: DataFrame of joint probabilities with Index of `prob_1` and columns of `prob_2`.
+    :return: DataFrame of joint probabilities with Index of `prob_1` and columns
+             of `prob_2`.
     """
     if prob_1_name == prob_2_name:
         raise ValueError('prob_1_name must be different to prob_2_name')
@@ -69,13 +78,18 @@ def create_jct(data_1: Union[DataFrame, Series],
     """
     Return a joint count table.
 
-    :param data_1: The DataFrame or Series containing the data for the first distribution.
-    :param data_2: The DataFrame or Series containing the data for the second distribution.
-    :param count_1_name: The name of the first question or attribute to find probability of.
-    :param count_2_name: The name of the second question or attribute to find probability of.
+    :param data_1: The DataFrame or Series containing the data for the first
+                   distribution.
+    :param data_2: The DataFrame or Series containing the data for the second
+                   distribution.
+    :param count_1_name: The name of the first question or attribute to find
+                         probability of.
+    :param count_2_name: The name of the second question or attribute to find
+                         probability of.
     :param count_1_order: List of labels to order the count values.
     :param count_2_order: List of labels to order the count values.
-    :return: DataFrame of joint counts with Index of `count_1_order` and columns of `count_2_order`.
+    :return: DataFrame of joint counts with Index of `count_1_order` and columns
+             of `count_2_order`.
     """
     if count_1_name == count_2_name:
         raise ValueError('prob_1_name must be different to prob_2_name')

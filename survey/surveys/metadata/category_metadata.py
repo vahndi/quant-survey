@@ -19,7 +19,8 @@ class CategoryMetadata(object):
         """
         Create a list of CategoryMetadata's from a pandas DataFrame
 
-        :param data: DataFrame containing columns with the names of CategoryMetadata attributes.
+        :param data: DataFrame containing columns with the names of
+                     CategoryMetadata attributes.
         """
         category_metas = []
         for name in data['name'].unique():

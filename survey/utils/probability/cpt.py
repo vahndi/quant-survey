@@ -10,15 +10,18 @@ class CPT(object):
     """
     Represents a Conditional Probability Table of 2 variables.
     """
-    def __init__(self, probability: SingleCategoryMixin, condition: SingleCategoryMixin):
+    def __init__(self, probability: SingleCategoryMixin,
+                 condition: SingleCategoryMixin):
 
         self._probability = probability
         self._condition = condition
         self._instances = merge(left=probability.data.rename(probability.name),
                                 right=condition.data.rename(condition.name),
                                 left_index=True, right_index=True, how='inner')
-        self._data = create_cpt(prob_data=probability.data, cond_data=condition.data,
-                                prob_name=probability.name, cond_name=condition.name,
+        self._data = create_cpt(prob_data=probability.data,
+                                cond_data=condition.data,
+                                prob_name=probability.name,
+                                cond_name=condition.name,
                                 prob_order=probability.category_names,
                                 cond_order=condition.category_names)
 

@@ -9,7 +9,8 @@ class Metadata(object):
     @staticmethod
     def text_to_name(metadatas: List['Metadata']) -> Dict[str, str]:
         """
-        Create a dictionary mapping the text of each metadata instance to its name.
+        Create a dictionary mapping the text of each metadata instance to its
+        name.
 
         :param metadatas: List of Metadata instances.
         """

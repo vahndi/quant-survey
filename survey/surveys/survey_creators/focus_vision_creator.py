@@ -4,7 +4,8 @@ from re import match
 from typing import List, Dict
 
 from numpy import nan
-from pandas import read_excel, DataFrame, Series, ExcelFile, concat, notnull, isnull
+from pandas import read_excel, DataFrame, Series, ExcelFile, concat, notnull, \
+    isnull
 
 from survey import Survey
 from survey.groups.question_groups.count_question_group import \
@@ -89,7 +90,9 @@ class FocusVisionCreator(SurveyCreator):
                     # build list of loop variable values to sub into question /
                     # attribute name
                     var_vals: List[str] = []
-                    for loop_variable, loop_val in zip(loop_variables, loop_vals):
+                    for loop_variable, loop_val in zip(
+                            loop_variables, loop_vals
+                    ):
                         loop_var_mappings = self._loop_variable_mappings(
                             loop_variable
                         )

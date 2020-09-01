@@ -1,8 +1,10 @@
 from typing import Dict, List, Optional
 
 from survey.attributes import PositiveMeasureAttribute
-from survey.mixins.containers.attribute_container_mixin import AttributeContainerMixin
-from survey.mixins.containers.single_type_attribute_container_mixin import SingleTypeAttributeContainerMixin
+from survey.mixins.containers.attribute_container_mixin import \
+    AttributeContainerMixin
+from survey.mixins.containers.single_type_attribute_container_mixin import \
+    SingleTypeAttributeContainerMixin
 from survey.utils.type_detection import all_are
 
 
@@ -14,13 +16,16 @@ class PositiveMeasureAttributeGroup(AttributeContainerMixin,
 
         if not all_are(attributes.values(), PositiveMeasureAttribute):
             raise TypeError('Not all attributes are PositiveMeasureAttribute.')
-        self._attributes: List[PositiveMeasureAttribute] = [a for a in attributes.values()]
+        self._attributes: List[PositiveMeasureAttribute] = [
+            a for a in attributes.values()
+        ]
         self._item_dict: Dict[str, PositiveMeasureAttribute] = attributes
         for property_name, attribute in attributes.items():
             try:
                 setattr(self, property_name, attribute)
             except:
-                print(f'Warning - could not set dynamic property for Attribute: {attribute}')
+                print(f'Warning - could not set dynamic property'
+                      f' for Attribute: {attribute}')
 
     def attribute(self, name: str) -> Optional[PositiveMeasureAttribute]:
         """
@@ -59,5 +64,6 @@ class PositiveMeasureAttributeGroup(AttributeContainerMixin,
         try:
             setattr(self, index, value)
         except:
-            print(f'Warning - could not set dynamic property for Question: {index}')
+            print(f'Warning - could not set dynamic property'
+                  f' for Question: {index}')
         self._attributes.append(value)

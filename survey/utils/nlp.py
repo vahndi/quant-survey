@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from mpl_format.io_utils import save_plot
-from nltk import word_tokenize, PorterStemmer, WordNetLemmatizer, RegexpTokenizer
+from nltk import word_tokenize, PorterStemmer, WordNetLemmatizer, \
+    RegexpTokenizer
 from nltk.corpus import stopwords
 from nltk.tokenize.api import TokenizerI
 from numpy import ndarray

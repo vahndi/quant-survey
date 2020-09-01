@@ -17,9 +17,11 @@ class Experiment(object):
         """
         return self._results
 
-    def result(self, ctl_group: RespondentGroup, exp_group: RespondentGroup) -> Optional[ExperimentResult]:
+    def result(self, ctl_group: RespondentGroup,
+               exp_group: RespondentGroup) -> Optional[ExperimentResult]:
         """
-        Return the result for the given combination of control and experimental groups.
+        Return the result for the given combination of control and experimental
+        groups.
 
         :param ctl_group: Control Respondent Group.
         :param exp_group: Experimental Respondent Group.
@@ -33,8 +35,10 @@ class Experiment(object):
 
         raise NotImplementedError
 
-    def plot_results(self, x: str = 'effect_mean', y: str = 'p_superior',
-                     split_by: str = 'answers_given', ax: Optional[Axes] = None) -> Axes:
+    def plot_results(
+            self, x: str = 'effect_mean', y: str = 'p_superior',
+            split_by: str = 'answers_given', ax: Optional[Axes] = None
+    ) -> Axes:
         """
         Create a scatter plot of the experimental results.
 

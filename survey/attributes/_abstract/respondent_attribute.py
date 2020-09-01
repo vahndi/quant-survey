@@ -21,13 +21,14 @@ class RespondentAttribute(FilterableMixin, object):
             data: Optional[Series] = None,
             ax: Optional[Axes] = None, **kwargs
     ):
-
         raise NotImplementedError
 
     def where(self, **kwargs) -> 'RespondentAttribute':
         """
-        Return a copy of the attribute with only the data where the survey matches the given arguments.
-        e.g. to filter down to Males who answered 'Yes' to 'q1', use question.where(gender='Male', q1='Yes')
+        Return a copy of the attribute with only the data where the survey
+        matches the given arguments.
+        e.g. to filter down to Males who answered 'Yes' to 'q1', use
+        question.where(gender='Male', q1='Yes')
 
         See FilterableMixin.where() for further documentation.
         """

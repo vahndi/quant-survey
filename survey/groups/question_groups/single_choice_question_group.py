@@ -78,7 +78,6 @@ class SingleChoiceQuestionGroup(QuestionContainerMixin,
         attribute.
         """
         questions = {}
-
         for category in split_by.category_names:
             condition = {split_by.name: category}
             questions[category] = question.where(**condition)

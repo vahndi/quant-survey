@@ -11,7 +11,8 @@ class SurveyMetadataMixin(object):
 
     def header_info(self) -> DataFrame:
         """
-        Return a dataframe with information extracted from the header of the survey data file.
+        Return a dataframe with information extracted from the header of the
+        survey data file.
         """
         raise NotImplementedError
 
@@ -21,12 +22,15 @@ class SurveyMetadataMixin(object):
 
     def unique_answers(self, max_unique: int = 20) -> DataFrame:
         """
-        Return a dataframe 'question_name' and 'question_answer' columns for each unique answer in questions where
+        Return a dataframe 'question_name' and 'question_answer' columns for
+        each unique answer in questions where
         the number of answers is ≤ max_unique.
         """
         unique_values = []
         for _, column_info in self.header_info().iterrows():
-            uniques = self.get_column(column_info['column_name']).unique().tolist()
+            uniques = self.get_column(
+                column_info['column_name']
+            ).unique().tolist()
             if len(uniques) <= max_unique:
                 for unique in uniques:
                     unique_values.append({
@@ -61,7 +65,8 @@ class FocusVisionMetadata(SurveyMetadataMixin, object):
     COLUMN_REGEXES = OrderedDict([
         (RE_UNNUMBERED, ('question_code', 'question_text')),
         (RE_NUMBERED, ('question_code', 'question_text')),
-        (RE_CHOICE, ('question_code', 'answer_code', 'answer_value', 'question_text'))
+        (RE_CHOICE, ('question_code', 'answer_code',
+                     'answer_value', 'question_text'))
     ])
 
     def __init__(self, file_name: Union[str, Path]):
@@ -148,13 +153,17 @@ class QualtricsMetadata(SurveyMetadataMixin, object):
 
 class UsabilityHubMetadata(SurveyMetadataMixin, object):
 
-    RE_NORMAL_QUESTION = r'^(\d+)\. \(([a-zA-Z ]+)\) \(Question (\d+): "(.+)"\) Answer$'
-    RE_IMAGE_QUESTION = r'^(\d+)\. \(([a-zA-Z ]+): \[(.+)\]\) \(Question (\d+): "(.+)"\) Answer$'
+    RE_NORMAL_QUESTION = \
+        r'^(\d+)\. \(([a-zA-Z ]+)\) \(Question (\d+): "(.+)"\) Answer$'
+    RE_IMAGE_QUESTION = \
+        r'^(\d+)\. \(([a-zA-Z ]+): \[(.+)\]\) \(Question (\d+): "(.+)"\) Answer$'
     RE_MATCH_ALL = r'^(.+)$'
 
     COLUMN_REGEXES = OrderedDict([
-        (RE_NORMAL_QUESTION, ('page', 'section', 'question_code', 'question_text')),
-        (RE_IMAGE_QUESTION, ('page', 'section', 'file_name', 'question_code', 'question_text')),
+        (RE_NORMAL_QUESTION, ('page', 'section',
+                              'question_code', 'question_text')),
+        (RE_IMAGE_QUESTION, ('page', 'section', 'file_name',
+                             'question_code', 'question_text')),
         (RE_MATCH_ALL, ('question_text',))
     ])
 

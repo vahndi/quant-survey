@@ -2,7 +2,8 @@ from typing import Dict, List, Optional
 
 from survey.custom_types import CategoricalAttribute
 from survey.mixins.categorical_group_mixin import CategoricalGroupMixin
-from survey.mixins.containers.attribute_container_mixin import AttributeContainerMixin
+from survey.mixins.containers.attribute_container_mixin import \
+    AttributeContainerMixin
 
 
 class CategoricalAttributeGroup(
@@ -13,14 +14,17 @@ class CategoricalAttributeGroup(
 
     def __init__(self, attributes: Dict[str, CategoricalAttribute] = None):
 
-        self._attributes: List[CategoricalAttribute] = [a for a in attributes.values()]
+        self._attributes: List[CategoricalAttribute] = [
+            a for a in attributes.values()
+        ]
         self._item_dict: Dict[str, CategoricalAttribute] = attributes
         self._set_categories()
         for property_name, question in attributes.items():
             try:
                 setattr(self, property_name, question)
             except:
-                print(f'Warning - could not set dynamic property for Question: {question}')
+                print(f'Warning - could not set dynamic property'
+                      f' for Question: {question}')
 
     def question(self, name: str) -> Optional[CategoricalAttribute]:
         """
