@@ -3,7 +3,8 @@ from typing import Optional
 
 from survey.mixins.data import DataMixin
 from survey.mixins.data_types.discrete_1d_mixin import Discrete1dMixin
-from survey.mixins.data_validation.count_validation_mixin import CountValidationMixin
+from survey.mixins.data_validation.count_validation_mixin import \
+    CountValidationMixin
 from survey.mixins.named import NamedMixin
 from survey.questions._abstract.question import Question
 

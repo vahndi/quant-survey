@@ -3,12 +3,16 @@ from typing import Dict, List, Optional, Union
 
 from survey.attributes import SingleCategoryAttribute
 from survey.mixins.categorical_group_mixin import CategoricalGroupMixin
-from survey.mixins.containers.attribute_container_mixin import AttributeContainerMixin
-from survey.mixins.containers.single_category_stack_mixin import SingleCategoryStackMixin
-from survey.mixins.containers.single_type_attribute_container_mixin import SingleTypeAttributeContainerMixin
+from survey.mixins.containers.attribute_container_mixin import \
+    AttributeContainerMixin
+from survey.mixins.containers.single_category_stack_mixin import \
+    SingleCategoryStackMixin
+from survey.mixins.containers.single_type_attribute_container_mixin import \
+    SingleTypeAttributeContainerMixin
 from survey.mixins.single_category_group.single_category_group_comparison_mixin import \
     SingleCategoryGroupComparisonMixin
-from survey.mixins.single_category_group.single_category_group_pt_mixin import SingleCategoryGroupPTMixin
+from survey.mixins.single_category_group.single_category_group_pt_mixin import \
+    SingleCategoryGroupPTMixin
 from survey.mixins.single_category_group.single_category_group_significance_mixin import \
     SingleCategoryGroupSignificanceMixin
 from survey.utils.type_detection import all_are

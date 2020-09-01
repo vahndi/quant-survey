@@ -486,7 +486,9 @@ class QuestionGroup(ItemContainerMixin,
         ):
             return self._groups[group_name]
 
-    def free_text_group(self, group_name: str) -> Optional[FreeTextQuestionGroup]:
+    def free_text_group(
+            self, group_name: str
+    ) -> Optional[FreeTextQuestionGroup]:
 
         if (
                 group_name in self._groups.keys() and
@@ -502,7 +504,9 @@ class QuestionGroup(ItemContainerMixin,
         ):
             return self._groups[group_name]
 
-    def multi_choice_group(self, group_name: str) -> Optional[MultiChoiceQuestionGroup]:
+    def multi_choice_group(
+            self, group_name: str
+    ) -> Optional[MultiChoiceQuestionGroup]:
 
         if (
                 group_name in self._groups.keys() and
@@ -510,7 +514,9 @@ class QuestionGroup(ItemContainerMixin,
         ):
             return self._groups[group_name]
 
-    def numerical_group(self, group_name: str) -> Optional[NumericalQuestionGroup]:
+    def numerical_group(
+            self, group_name: str
+    ) -> Optional[NumericalQuestionGroup]:
 
         if (
                 group_name in self._groups.keys() and
@@ -518,15 +524,20 @@ class QuestionGroup(ItemContainerMixin,
         ):
             return self._groups[group_name]
 
-    def positive_measure_group(self, group_name: str) -> Optional[PositiveMeasureQuestionGroup]:
+    def positive_measure_group(
+            self, group_name: str
+    ) -> Optional[PositiveMeasureQuestionGroup]:
 
         if (
                 group_name in self._groups.keys() and
-                isinstance(self._groups[group_name], PositiveMeasureQuestionGroup)
+                isinstance(self._groups[group_name],
+                           PositiveMeasureQuestionGroup)
         ):
             return self._groups[group_name]
 
-    def ranked_choice_group(self, group_name: str) -> Optional[RankedChoiceQuestionGroup]:
+    def ranked_choice_group(
+            self, group_name: str
+    ) -> Optional[RankedChoiceQuestionGroup]:
 
         if (
                 group_name in self._groups.keys() and
@@ -534,7 +545,9 @@ class QuestionGroup(ItemContainerMixin,
         ):
             return self._groups[group_name]
 
-    def single_choice_group(self, group_name: str) -> Optional[SingleChoiceQuestionGroup]:
+    def single_choice_group(
+            self, group_name: str
+    ) -> Optional[SingleChoiceQuestionGroup]:
 
         if (
                 group_name in self._groups.keys() and

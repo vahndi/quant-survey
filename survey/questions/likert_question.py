@@ -1,23 +1,30 @@
 from collections import OrderedDict
 from itertools import product
+from typing import Dict, List, Union, Callable, Optional, Tuple
+
 from matplotlib.axes import Axes
 from matplotlib.patches import Patch
 from mpl_format.axes.axis_utils import new_axes
 from mpl_format.text.text_utils import wrap_text
 from pandas import Series, DataFrame, pivot_table, concat
-from probability.distributions import BetaBinomial, BetaBinomialConjugate
-from typing import Dict, List, Union, Callable, Optional, Tuple
+from probability.distributions import BetaBinomialConjugate
 
 from survey.mixins.data import CategoricalDataMixin
 from survey.mixins.data_types.categorical_mixin import CategoricalMixin
-from survey.mixins.data_types.single_category_distribution_mixin import SingleCategoryDistributionMixin
-from survey.mixins.data_types.single_category_pt_mixin import SingleCategoryPTMixin
-from survey.mixins.data_types.single_category_significance_mixin import SingleCategorySignificanceMixin
-from survey.mixins.data_validation.single_category_validation_mixin import SingleCategoryValidationMixin
+from survey.mixins.data_types.single_category_distribution_mixin import \
+    SingleCategoryDistributionMixin
+from survey.mixins.data_types.single_category_pt_mixin import \
+    SingleCategoryPTMixin
+from survey.mixins.data_types.single_category_significance_mixin import \
+    SingleCategorySignificanceMixin
+from survey.mixins.data_validation.single_category_validation_mixin import \
+    SingleCategoryValidationMixin
 from survey.mixins.named import NamedMixin
 from survey.questions._abstract.question import Question
-from survey.utils.formatting import trim_common_leading, find_common_leading, trim_common_trailing
-from survey.utils.plots import plot_categorical_distributions, label_pair_bar_plot_pcts
+from survey.utils.formatting import trim_common_leading, find_common_leading, \
+    trim_common_trailing
+from survey.utils.plots import plot_categorical_distributions, \
+    label_pair_bar_plot_pcts
 
 
 class LikertQuestion(

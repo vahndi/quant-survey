@@ -3,11 +3,15 @@ from typing import List, Union, Optional
 
 from survey.mixins.data import CategoricalDataMixin
 from survey.mixins.data_types.categorical_mixin import CategoricalMixin
-from survey.mixins.data_types.single_category_distribution_mixin import SingleCategoryDistributionMixin
+from survey.mixins.data_types.single_category_distribution_mixin import \
+    SingleCategoryDistributionMixin
 from survey.mixins.data_types.single_category_mixin import SingleCategoryMixin
-from survey.mixins.data_types.single_category_pt_mixin import SingleCategoryPTMixin
-from survey.mixins.data_types.single_category_significance_mixin import SingleCategorySignificanceMixin
-from survey.mixins.data_validation.single_category_validation_mixin import SingleCategoryValidationMixin
+from survey.mixins.data_types.single_category_pt_mixin import \
+    SingleCategoryPTMixin
+from survey.mixins.data_types.single_category_significance_mixin import \
+    SingleCategorySignificanceMixin
+from survey.mixins.data_validation.single_category_validation_mixin import \
+    SingleCategoryValidationMixin
 from survey.mixins.named import NamedMixin
 from survey.questions._abstract.question import Question
 

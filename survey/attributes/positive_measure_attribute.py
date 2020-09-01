@@ -3,7 +3,8 @@ from typing import Optional
 
 from survey.mixins.data import DataMixin
 from survey.mixins.data_types.continuous_1d_mixin import Continuous1dMixin
-from survey.mixins.data_validation.positive_measure_validation_mixin import PositiveMeasureValidationMixin
+from survey.mixins.data_validation.positive_measure_validation_mixin import \
+    PositiveMeasureValidationMixin
 from survey.mixins.named import NamedMixin
 from survey.attributes._abstract.respondent_attribute import RespondentAttribute
 
