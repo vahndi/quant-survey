@@ -2,7 +2,8 @@ from typing import Dict, List, Optional
 
 from survey.custom_types import CategoricalQuestion
 from survey.mixins.categorical_group_mixin import CategoricalGroupMixin
-from survey.mixins.containers.question_container_mixin import QuestionContainerMixin
+from survey.mixins.containers.question_container_mixin import \
+    QuestionContainerMixin
 
 
 class CategoricalQuestionGroup(
@@ -13,14 +14,16 @@ class CategoricalQuestionGroup(
 
     def __init__(self, questions: Dict[str, CategoricalQuestion] = None):
 
-        self._questions: List[CategoricalQuestion] = [q for q in questions.values()]
+        self._questions: List[CategoricalQuestion] = [
+            q for q in questions.values()]
         self._set_categories()
         self._item_dict: Dict[str, CategoricalQuestion] = questions
         for property_name, question in questions.items():
             try:
                 setattr(self, property_name, question)
             except:
-                print(f'Warning - could not set dynamic property for Question: {question}')
+                print(f'Warning - could not set dynamic property'
+                      f' for Question: {question}')
 
     def question(self, name: str) -> Optional[CategoricalQuestion]:
         """

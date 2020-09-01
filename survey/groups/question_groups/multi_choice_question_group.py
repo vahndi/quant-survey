@@ -5,8 +5,10 @@ from typing import Dict, List, Optional, Union
 
 from survey.constants import CATEGORY_SPLITTER
 from survey.mixins.categorical_group_mixin import CategoricalGroupMixin
-from survey.mixins.containers.question_container_mixin import QuestionContainerMixin
-from survey.mixins.containers.single_type_question_container_mixin import SingleTypeQuestionContainerMixin
+from survey.mixins.containers.question_container_mixin import \
+    QuestionContainerMixin
+from survey.mixins.containers.single_type_question_container_mixin import \
+    SingleTypeQuestionContainerMixin
 from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.questions import MultiChoiceQuestion
 from survey.utils.type_detection import all_are
