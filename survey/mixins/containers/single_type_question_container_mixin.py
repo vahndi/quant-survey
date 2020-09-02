@@ -1,6 +1,9 @@
+from copy import copy
 from itertools import product
-from typing import Dict, List, Optional, Any, Union, Tuple, Callable, TypeVar, \
-    Type
+from typing import Dict, List, Optional, Union, Callable, TypeVar, Type, \
+    ClassVar, Generic
+
+from pandas import notnull, Series, DataFrame
 
 from survey.compound_types import StringOrStringTuple
 from survey.mixins.data_types.categorical_mixin import CategoricalMixin
@@ -8,38 +11,80 @@ from survey.questions._abstract.question import Question
 
 
 T = TypeVar('T', bound='SingleTypeQuestionContainerMixin')
-Q = TypeVar('Q')
+Q = TypeVar('Q', bound=Question)
 
 
-class SingleTypeQuestionContainerMixin(object):
+class SingleTypeQuestionContainerMixin(Generic[Q]):
     """
     QuestionContainer containing a single type of question e.g. a group of
     LikertQuestion's
     """
-    _item_dict: Dict[str, Question]
-
-    def where(self, **kwargs):
-        """
-        Return a new QuestionContainerMixin with questions containing only the
-        responses for users where the filtering conditions are met.
-        See FilterableMixin.where() for further documentation.
-        """
-        constructor = type(self)
-        return constructor(questions={
-            name: question.where(**kwargs)
-            for name, question in self._item_dict.items()
-        })
+    Q: ClassVar[Callable]
+    _item_dict: Dict[str, Q]
+    _questions: List[Q]
+    data: DataFrame
 
     @property
-    def keys(self) -> List[str]:
-        return list(self._item_dict.keys())
+    def item_dict(self: T) -> Dict[str, Q]:
+        return self._item_dict
 
-    def find_key(self, question) -> Optional[str]:
+    def question(self, name: str) -> Optional[Q]:
+        """
+        Return the Question with the given name.
 
+        :param name: Name of the question to return.
+        """
+        try:
+            return [q for q in self._questions if q.name == name][0]
+        except IndexError:
+            return None
+
+    @property
+    def items(self) -> List[Q]:
+        return self._questions
+
+    def to_list(self) -> List[Q]:
+        """
+        Return all the Questions asked in the Survey.
+        """
+        return self._questions
+
+    def find_key(self, question: Q) -> Optional[str]:
+        """
+        Find the key for the given question, if it is contained in the Group.
+        """
         for k, q in self._item_dict.items():
             if q.name == question.name:
                 return k
         return None
+
+    def merge(self, name: Optional[str] = '', **kwargs) -> Q:
+        """
+        Return a new Question combining all the responses of the different
+        questions in the group.
+        N.B. assumes that there is a maximum of one response across all
+        questions for each respondent.
+
+        :param name: The name for the new merged Question.
+        :param kwargs: Attribute values to override in the new merged Question.
+        """
+        if len(set([type(q) for q in self._questions])) != 1:
+            raise TypeError(
+                'Questions must all be of the same type to merge answers'
+            )
+        if self.data.notnull().sum(axis=1).max() > 1:
+            raise ValueError(
+                'Can only merge when there is a max of one response '
+                'across all questions per respondent'
+            )
+        data = self.data.loc[self.data.notnull().sum(axis=1) == 1]
+        new_data = [row.loc[notnull(row)].iloc[0] for _, row in data.iterrows()]
+        new_question = copy(self._questions[0])
+        new_question.name = name
+        new_question._data = Series(data=new_data, name=name)
+        for kw, arg in kwargs.items():
+            setattr(new_question, kw, arg)
+        return new_question
 
     @classmethod
     def split_question(

@@ -9,7 +9,6 @@ from survey.mixins.containers.single_category_stack_mixin import \
     SingleCategoryStackMixin
 from survey.mixins.containers.single_type_question_container_mixin import \
     SingleTypeQuestionContainerMixin
-from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.mixins.single_category_group.single_category_group_comparison_mixin import \
     SingleCategoryGroupComparisonMixin
 from survey.mixins.single_category_group.single_category_group_pt_mixin import \
@@ -20,14 +19,16 @@ from survey.questions import SingleChoiceQuestion
 from survey.utils.type_detection import all_are
 
 
-class SingleChoiceQuestionGroup(QuestionContainerMixin,
-                                SingleCategoryStackMixin,
-                                SingleCategoryGroupSignificanceMixin,
-                                SingleCategoryGroupComparisonMixin,
-                                SingleCategoryGroupPTMixin,
-                                SingleTypeQuestionContainerMixin,
-                                CategoricalGroupMixin,
-                                object):
+class SingleChoiceQuestionGroup(
+    QuestionContainerMixin,
+    SingleCategoryStackMixin,
+    SingleCategoryGroupSignificanceMixin,
+    SingleCategoryGroupComparisonMixin,
+    SingleCategoryGroupPTMixin,
+    SingleTypeQuestionContainerMixin[SingleChoiceQuestion],
+    CategoricalGroupMixin,
+    object
+):
 
     def __init__(self, questions: Dict[str, SingleChoiceQuestion] = None):
 
@@ -44,44 +45,6 @@ class SingleChoiceQuestionGroup(QuestionContainerMixin,
             except:
                 print(f'Warning - could not set dynamic property'
                       f' for Question: {question}')
-
-    @property
-    def item_dict(self) -> Dict[str, SingleChoiceQuestion]:
-        return self._item_dict
-
-    @property
-    def items(self) -> List[SingleChoiceQuestion]:
-        return self._questions
-
-    def question(self, name: str) -> Optional[SingleChoiceQuestion]:
-        """
-        Return the Question with the given name.
-
-        :param name: Name of the question to return.
-        """
-        return super().question(name=name)
-
-    def to_list(self) -> List[SingleChoiceQuestion]:
-        """
-        Return all the Questions asked in the Survey.
-        """
-        return self._questions
-
-    @staticmethod
-    def split_question(
-            question: SingleChoiceQuestion,
-            split_by: CategoricalMixin
-    ) -> 'SingleChoiceQuestionGroup':
-        """
-        Create a new SingleChoiceQuestionGroup by splitting an existing
-        SingleChoiceQuestion by the values of a Categorical question or
-        attribute.
-        """
-        questions = SingleTypeQuestionContainerMixin._split_question(
-            question=question,
-            split_by=split_by
-        )
-        return SingleChoiceQuestionGroup(questions=questions)
 
     def count(self) -> int:
         """

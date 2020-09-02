@@ -2,12 +2,15 @@ from typing import Dict, List, Optional
 
 from survey.custom_types import CategoricalQuestion
 from survey.mixins.categorical_group_mixin import CategoricalGroupMixin
+from survey.mixins.containers.multi_type_question_container_mixin import \
+    MultiTypeQuestionContainerMixin
 from survey.mixins.containers.question_container_mixin import \
     QuestionContainerMixin
 
 
 class CategoricalQuestionGroup(
     QuestionContainerMixin,
+    MultiTypeQuestionContainerMixin,
     CategoricalGroupMixin,
     object
 ):

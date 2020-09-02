@@ -1,11 +1,17 @@
 from typing import Dict, List, Optional
 
 from survey.custom_types import NumericalQuestion
+from survey.mixins.containers.multi_type_question_container_mixin import \
+    MultiTypeQuestionContainerMixin
 from survey.mixins.containers.question_container_mixin import \
     QuestionContainerMixin
 
 
-class NumericalQuestionGroup(QuestionContainerMixin, object):
+class NumericalQuestionGroup(
+    QuestionContainerMixin,
+    MultiTypeQuestionContainerMixin,
+    object
+):
 
     def __init__(self, questions: Dict[str, NumericalQuestion] = None):
 

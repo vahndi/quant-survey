@@ -1,7 +1,8 @@
 from copy import copy
+from typing import Dict, List, Optional, Union
+
 from numpy import nan
 from pandas import concat, Index, MultiIndex, DataFrame, Series
-from typing import Dict, List, Optional, Union
 
 from survey.constants import CATEGORY_SPLITTER
 from survey.mixins.categorical_group_mixin import CategoricalGroupMixin
@@ -9,23 +10,22 @@ from survey.mixins.containers.question_container_mixin import \
     QuestionContainerMixin
 from survey.mixins.containers.single_type_question_container_mixin import \
     SingleTypeQuestionContainerMixin
-from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.questions import MultiChoiceQuestion
 from survey.utils.type_detection import all_are
 
 
-class MultiChoiceQuestionGroup(QuestionContainerMixin,
-                               SingleTypeQuestionContainerMixin,
-                               CategoricalGroupMixin,
-                               object):
+class MultiChoiceQuestionGroup(
+    QuestionContainerMixin,
+    SingleTypeQuestionContainerMixin[MultiChoiceQuestion],
+    CategoricalGroupMixin,
+    object
+):
 
     def __init__(self, questions: Dict[str, MultiChoiceQuestion] = None):
 
         if not all_are(questions.values(), MultiChoiceQuestion):
             raise TypeError('Not all attributes are MultiChoiceQuestions.')
-        self._questions: List[MultiChoiceQuestion] = [
-            q for q in questions.values()
-        ]
+        self._questions: List[MultiChoiceQuestion] = [q for q in questions.values()]
         self._set_categories()
         self._item_dict: Dict[str, MultiChoiceQuestion] = questions
         for property_name, question in questions.items():
@@ -34,40 +34,6 @@ class MultiChoiceQuestionGroup(QuestionContainerMixin,
             except:
                 print(f'Warning - could not set dynamic property'
                       f' for Question: {question}')
-
-    def question(self, name: str) -> Optional[MultiChoiceQuestion]:
-        """
-        Return the Question with the given name.
-
-        :param name: Name of the question to return.
-        """
-        return super().question(name=name)
-
-    def to_list(self) -> List[MultiChoiceQuestion]:
-        """
-        Return all the Questions asked in the Survey.
-        """
-        return self._questions
-
-    @staticmethod
-    def split_question(
-            question: MultiChoiceQuestion,
-            split_by: CategoricalMixin
-    ) -> 'MultiChoiceQuestionGroup':
-        """
-        Create a new MultiChoiceQuestionGroup by splitting an existing
-        MultiChoiceQuestion by the values of a Categorical question or
-        attribute.
-        """
-        questions = SingleTypeQuestionContainerMixin._split_question(
-            question=question,
-            split_by=split_by
-        )
-        return MultiChoiceQuestionGroup(questions=questions)
-
-    @property
-    def items(self) -> List[MultiChoiceQuestion]:
-        return self._questions
 
     def stack(self, name: str,
               drop_na: bool = True,

@@ -1,24 +1,24 @@
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from survey.mixins.containers.question_container_mixin import \
     QuestionContainerMixin
 from survey.mixins.containers.single_type_question_container_mixin import \
     SingleTypeQuestionContainerMixin
-from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.questions import PositiveMeasureQuestion
 from survey.utils.type_detection import all_are
 
 
-class PositiveMeasureQuestionGroup(QuestionContainerMixin,
-                                   SingleTypeQuestionContainerMixin,
-                                   object):
+class PositiveMeasureQuestionGroup(
+    QuestionContainerMixin,
+    SingleTypeQuestionContainerMixin[PositiveMeasureQuestion],
+    object
+):
 
     def __init__(self, questions: Dict[str, PositiveMeasureQuestion] = None):
 
         if not all_are(questions.values(), PositiveMeasureQuestion):
             raise TypeError('Not all attributes are PositiveMeasureQuestions.')
-        self._questions: List[PositiveMeasureQuestion] = [
-            q for q in questions.values()]
+        self._questions: List[PositiveMeasureQuestion] = [q for q in questions.values()]
         self._item_dict: Dict[str, PositiveMeasureQuestion] = questions
         for property_name, question in questions.items():
             try:
@@ -26,40 +26,6 @@ class PositiveMeasureQuestionGroup(QuestionContainerMixin,
             except:
                 print(f'Warning - could not set dynamic property'
                       f' for Question: {question}')
-
-    def question(self, name: str) -> Optional[PositiveMeasureQuestion]:
-        """
-        Return the Question with the given name.
-
-        :param name: Name of the question to return.
-        """
-        return super().question(name=name)
-
-    def to_list(self) -> List[PositiveMeasureQuestion]:
-        """
-        Return all the Questions asked in the Survey.
-        """
-        return self._questions
-
-    @staticmethod
-    def split_question(
-            question: PositiveMeasureQuestion,
-            split_by: CategoricalMixin
-    ) -> 'PositiveMeasureQuestionGroup':
-        """
-        Create a new PositiveMeasureQuestionGroup by splitting an existing
-        PositiveMeasureQuestion by the values of a Categorical question or
-        attribute.
-        """
-        questions = SingleTypeQuestionContainerMixin._split_question(
-            question=question,
-            split_by=split_by
-        )
-        return PositiveMeasureQuestionGroup(questions=questions)
-
-    @property
-    def items(self) -> List[PositiveMeasureQuestion]:
-        return self._questions
 
     def __getitem__(self, item) -> PositiveMeasureQuestion:
         """

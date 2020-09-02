@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from typing import Dict, Optional, List, Any, Tuple, Union, Callable
+from typing import Dict, Optional, List, Any, Tuple, Union
 
 from matplotlib.figure import Figure
 from mpl_format.axes.axes_formatter import AxesFormatter
@@ -10,7 +10,6 @@ from pandas import Series, DataFrame, pivot_table, concat
 from probability.distributions import BetaBinomialConjugate
 from seaborn import heatmap
 
-from survey.compound_types import StringOrStringTuple
 from survey.mixins.categorical_group_mixin import CategoricalGroupMixin
 from survey.mixins.containers.question_container_mixin import \
     QuestionContainerMixin
@@ -18,17 +17,20 @@ from survey.mixins.containers.single_category_stack_mixin import \
     SingleCategoryStackMixin
 from survey.mixins.containers.single_type_question_container_mixin import \
     SingleTypeQuestionContainerMixin
-from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.questions import LikertQuestion
 from survey.utils.plots import draw_vertical_dividers
 from survey.utils.type_detection import all_are
 
 
-class LikertQuestionGroup(QuestionContainerMixin,
-                          SingleCategoryStackMixin,
-                          SingleTypeQuestionContainerMixin,
-                          CategoricalGroupMixin,
-                          object):
+class LikertQuestionGroup(
+    QuestionContainerMixin,
+    SingleCategoryStackMixin,
+    SingleTypeQuestionContainerMixin[LikertQuestion],
+    CategoricalGroupMixin,
+    object
+):
+
+    Q = LikertQuestion
 
     def __init__(self, questions: Dict[str, LikertQuestion] = None):
 
@@ -43,28 +45,6 @@ class LikertQuestionGroup(QuestionContainerMixin,
             except:
                 print(f'Warning - could not set dynamic property '
                       f'for Question: {question}')
-
-    @property
-    def item_dict(self) -> Dict[str, LikertQuestion]:
-        return self._item_dict
-
-    @property
-    def items(self) -> List[LikertQuestion]:
-        return self._questions
-
-    def question(self, name: str) -> Optional[LikertQuestion]:
-        """
-        Return the Question with the given name.
-
-        :param name: Name of the question to return.
-        """
-        return super().question(name=name)
-
-    def to_list(self) -> List[LikertQuestion]:
-        """
-        Return all the Questions asked in the Survey.
-        """
-        return self._questions
 
     # region statistics
 

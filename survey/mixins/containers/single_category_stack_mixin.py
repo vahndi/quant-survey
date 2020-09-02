@@ -8,7 +8,7 @@ from survey.mixins.data_types.single_category_mixin import SingleCategoryMixin
 class SingleCategoryStackMixin(object):
 
     items: List[SingleCategoryMixin]
-    item_dict: Dict[str, SingleCategoryMixin]
+    _item_dict: Dict[str, SingleCategoryMixin]
 
     def stack(
             self, name: str,
@@ -65,8 +65,8 @@ class SingleCategoryStackMixin(object):
                 name_list = None
             if key_index is not None:
                 key_list = [
-                    [k for k in self.item_dict.keys()
-                     if self.item_dict[k] is item][0]
+                    [k for k in self._item_dict.keys()
+                     if self._item_dict[k] is item][0]
                 ] * len(item_data)
             else:
                 key_list = None
