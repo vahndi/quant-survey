@@ -66,63 +66,6 @@ class LikertQuestionGroup(QuestionContainerMixin,
         """
         return self._questions
 
-    @staticmethod
-    def split_question(
-            question: LikertQuestion,
-            split_by: Union[CategoricalMixin, List[CategoricalMixin]]
-    ) -> 'LikertQuestionGroup':
-        """
-        Create a new LikertQuestionGroup by splitting an existing LikertQuestion
-        by the values of a Categorical question or attribute.
-        """
-        questions = SingleTypeQuestionContainerMixin._split_question(
-            question=question,
-            split_by=split_by
-        )
-        return LikertQuestionGroup(questions=questions)
-
-    def split_by_key(
-            self,
-            splitter: Callable[[StringOrStringTuple],
-                               Optional[StringOrStringTuple]],
-            renamer: Optional[
-                Callable[[StringOrStringTuple],
-                         StringOrStringTuple]
-            ] = None
-    ) -> Dict[StringOrStringTuple, 'LikertQuestionGroup']:
-        """
-        Split the group into a dictionary of new LikertQuestionGroups.
-
-        :param splitter: Callable that takes the key of each question and
-                         returns a new key. Each question that returns the
-                         same new key will be placed into the same group.
-                         This new key will be the key of the group in the
-                         returned dict.
-        :param renamer: Optional Callable to provide a new name for each key.
-        """
-        split_dict = self._split_by_key(
-            splitter=splitter, renamer=renamer
-        )
-        return {
-            new_key: LikertQuestionGroup(questions=split_dict[new_key])
-            for new_key in split_dict.keys()
-        }
-
-    def map_keys(
-            self,
-            mapper: Callable[[StringOrStringTuple], StringOrStringTuple]
-    ):
-        """
-        Return a new LikertQuestionGroup with keys mapped using mapper.
-
-        :param mapper: Callable to map existing keys to new keys.
-        """
-        return LikertQuestionGroup({
-            mapper(key): question
-            for key, question in self._item_dict.items()
-        })
-
-
     # region statistics
 
     def min(self) -> Series:

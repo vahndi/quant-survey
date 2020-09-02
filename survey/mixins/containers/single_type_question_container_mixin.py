@@ -1,8 +1,14 @@
 from itertools import product
-from typing import Dict, List, Optional, Any, Union, Tuple, Callable
+from typing import Dict, List, Optional, Any, Union, Tuple, Callable, TypeVar, \
+    Type
 
 from survey.compound_types import StringOrStringTuple
+from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.questions._abstract.question import Question
+
+
+T = TypeVar('T', bound='SingleTypeQuestionContainerMixin')
+Q = TypeVar('Q')
 
 
 class SingleTypeQuestionContainerMixin(object):
@@ -35,14 +41,15 @@ class SingleTypeQuestionContainerMixin(object):
                 return k
         return None
 
-    @staticmethod
-    def _split_question(
-            question: Any, split_by: Union[Any, List[Any]]
-    ) -> Dict[Union[str, Tuple[str, ...]], Any]:
+    @classmethod
+    def split_question(
+            cls: Type[T],
+            question: Q,
+            split_by: Union[CategoricalMixin, List[CategoricalMixin]]
+    ) -> T:
         """
-        Create a new QuestionGroup of a given type by splitting an existing
-        Question of that type by the values of a Categorical Question or
-        Attribute.
+        Create a new QuestionGroup by splitting an existing Question
+        by the values of a Categorical question or attribute.
         """
         if not isinstance(split_by, list):
             split_by = [split_by]
@@ -59,19 +66,19 @@ class SingleTypeQuestionContainerMixin(object):
             else:
                 questions[tuple(category_combo)] = question.where(**conditions)
 
-        return questions
+        return cls(questions=questions)
 
-    def _split_by_key(
-            self,
+    def split_by_key(
+            self: T,
             splitter: Callable[[StringOrStringTuple],
                                Optional[StringOrStringTuple]],
             renamer: Optional[
                 Callable[[StringOrStringTuple],
                          StringOrStringTuple]
             ] = None
-    ) -> Dict[StringOrStringTuple, Dict[StringOrStringTuple, Any]]:
+    ) -> Dict[StringOrStringTuple, T]:
         """
-        Split the group into a dictionary of new questions.
+        Split the group into a dictionary of new QuestionGroups.
 
         :param splitter: Callable that takes the key of each question and
                          returns a new key. Each question that returns the
@@ -90,5 +97,21 @@ class SingleTypeQuestionContainerMixin(object):
             if renamer is not None:
                 question_key = renamer(question_key)
             split_dict[group_key][question_key] = question
+        return {
+            new_key: type(self)(questions=split_dict[new_key])
+            for new_key in split_dict.keys()
+        }
 
-        return split_dict
+    def map_keys(
+            self: T,
+            mapper: Callable[[StringOrStringTuple], StringOrStringTuple]
+    ) -> T:
+        """
+        Return a new QuestionGroup with keys mapped using mapper.
+
+        :param mapper: Callable to map existing keys to new keys.
+        """
+        return type(self)({
+            mapper(key): question
+            for key, question in self._item_dict.items()
+        })
