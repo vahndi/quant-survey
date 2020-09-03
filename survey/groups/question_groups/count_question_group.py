@@ -14,7 +14,7 @@ class CountQuestionGroup(
     object
 ):
 
-    Q: CountQuestion
+    Q = CountQuestion
 
     def __init__(self, questions: Dict[str, CountQuestion] = None):
 
@@ -28,26 +28,3 @@ class CountQuestionGroup(
             except:
                 print(f'Warning - could not set dynamic property'
                       f' for Question: {question}')
-
-    def __getitem__(self, item) -> CountQuestion:
-        """
-        Return the question with the given key.
-        """
-        return self._item_dict[item]
-
-    def __setitem__(self, index, value: CountQuestion):
-        """
-        Add a new question to the group.
-
-        :param index: The accessor key for the question.
-        :param value: The question.
-        """
-        if not isinstance(value, CountQuestion):
-            raise TypeError('Value to set is not a CountQuestion')
-        self._item_dict[index] = value
-        try:
-            setattr(self, index, value)
-        except:
-            print(f'Warning - could not set dynamic property'
-                  f' for Question: {index}')
-        self._questions.append(value)

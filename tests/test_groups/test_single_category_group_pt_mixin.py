@@ -4,7 +4,8 @@ from unittest.case import TestCase
 from numpy import nan
 from pandas import Series, ExcelFile, read_excel, Index
 
-from survey.groups.question_groups.single_choice_question_group import SingleChoiceQuestionGroup
+from survey.groups.question_groups.single_choice_question_group import \
+    SingleChoiceQuestionGroup
 from survey.questions import SingleChoiceQuestion
 from tests.paths.files import FN_STACK_DATA
 

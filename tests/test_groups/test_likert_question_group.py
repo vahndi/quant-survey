@@ -8,7 +8,7 @@ from pandas import Series
 
 from survey.groups.question_groups.likert_question_group import \
     LikertQuestionGroup
-from survey.questions import LikertQuestion
+from survey.questions import LikertQuestion, CountQuestion
 
 
 class TestLikertQuestionGroup(TestCase):
@@ -37,13 +37,34 @@ class TestLikertQuestionGroup(TestCase):
                 categories=categories, data=data
             )
 
-        group = LikertQuestionGroup(questions)
-        self.fig = group.plot_distribution_grid(
+        self.group = LikertQuestionGroup(questions)
+        self.fig = self.group.plot_distribution_grid(
             n_rows=3, n_cols=4, significance=True,
             group_significance=True
         )
         self.green_color = (0.0, 1.0, 0.0, 1.0)
         self.red_color = (1.0, 0.0, 0.0, 1.0)
+
+    def test_get_item__exists(self):
+
+        self.assertIsInstance(self.group['question_1'], LikertQuestion)
+
+    def test_get_item__does_not_exist(self):
+
+        self.assertRaises(KeyError, self.group.__getitem__, 'question_12')
+
+    def test_set_item__correct_type(self):
+
+        new_question = self.group['question_0'].rename('question_x')
+        self.group['question_x'] = new_question
+        self.assertIsInstance(self.group['question_x'], LikertQuestion)
+
+    def test_set_item__incorrect_type(self):
+
+        new_question = CountQuestion(name='count_question',
+                                     text='I am a CountQuestion',
+                                     data=Series(data=[1, 2, 3, 4, 5]))
+        self.assertRaises(TypeError, self.group.__setitem__, new_question)
 
     def test_plot_comparison_grid_question_significance(self):
 

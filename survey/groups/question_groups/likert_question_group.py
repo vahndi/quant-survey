@@ -164,29 +164,6 @@ class LikertQuestionGroup(
         """
         return other.__rshift__(self)
 
-    def __getitem__(self, item) -> LikertQuestion:
-        """
-        Return the question with the given key.
-        """
-        return self._item_dict[item]
-
-    def __setitem__(self, index, value: LikertQuestion):
-        """
-        Add a new question to the group.
-
-        :param index: The accessor key for the question.
-        :param value: The question.
-        """
-        if not isinstance(value, LikertQuestion):
-            raise TypeError('Value to set is not a LikertQuestion')
-        self._item_dict[index] = value
-        try:
-            setattr(self, index, value)
-        except:
-            print(f'Warning - could not set dynamic property '
-                  f'for Question: {index}')
-        self._questions.append(value)
-
     def merge_with(
             self, other: 'LikertQuestionGroup'
     ) -> 'LikertQuestionGroup':

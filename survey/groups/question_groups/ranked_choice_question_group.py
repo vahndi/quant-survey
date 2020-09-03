@@ -16,6 +16,8 @@ class RankedChoiceQuestionGroup(
     object
 ):
 
+    Q = RankedChoiceQuestion
+
     def __init__(self, questions: Dict[str, RankedChoiceQuestion] = None):
 
         if not all_are(questions.values(), RankedChoiceQuestion):
@@ -30,26 +32,3 @@ class RankedChoiceQuestionGroup(
             except:
                 print(f'Warning - could not set dynamic property'
                       f' for Question: {question}')
-
-    def __getitem__(self, item) -> RankedChoiceQuestion:
-        """
-        Return the question with the given key.
-        """
-        return self._item_dict[item]
-
-    def __setitem__(self, index, value: RankedChoiceQuestion):
-        """
-        Add a new question to the group.
-
-        :param index: The accessor key for the question.
-        :param value: The question.
-        """
-        if not isinstance(value, RankedChoiceQuestion):
-            raise TypeError('Value to set is not a RankedChoiceQuestion')
-        self._item_dict[index] = value
-        try:
-            setattr(self, index, value)
-        except:
-            print(f'Warning - could not set dynamic property'
-                  f' for Question: {index}')
-        self._questions.append(value)
