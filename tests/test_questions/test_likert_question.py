@@ -1,34 +1,41 @@
 from numpy import array
-from pandas import Series, DataFrame
+from pandas import DataFrame, Series
 from unittest.case import TestCase
 from probability.distributions import Beta
 
-from survey.questions import LikertQuestion
+from tests.test_questions.question_factories import make_likert_question
 
 
 class TestLikertQuestion(TestCase):
 
     def setUp(self) -> None:
 
-        categories = {
-            '1 - strongly disagree': 1,
-            '2 - disagree': 2,
-            '3 - neither agree nor disagree': 3,
-            '4 - agree': 4,
-            '5 - strongly agree': 5
-        }
-        data = Series(
-            ['1 - strongly disagree'] * 2 +
-            ['2 - disagree'] * 4 +
-            ['3 - neither agree nor disagree'] * 6 +
-            ['5 - strongly agree'] * 3
-        )
-        self.question = LikertQuestion(
-            name='test_likert_question',
-            text='Test Likert Question',
-            categories=categories,
-            data=data
-        )
+        self.question = make_likert_question()
+
+    def test_count(self):
+
+        self.assertEqual(15, self.question.count())
+        self.assertEqual(2, self.question.count('1 - strongly disagree'))
+        self.assertEqual(6, self.question.count(['1 - strongly disagree',
+                                                 '2 - disagree']))
+
+    def test_value_counts(self):
+
+        self.assertTrue(Series({
+            '1 - strongly disagree': 2,
+            '2 - disagree': 4,
+            '3 - neither agree nor disagree': 6,
+            '4 - agree': 0,
+            '5 - strongly agree': 3
+        }).equals(self.question.value_counts()))
+        self.assertTrue(Series({
+            '1 - strongly disagree': 2,
+        }).equals(self.question.value_counts('1 - strongly disagree')))
+        self.assertTrue(Series({
+            '1 - strongly disagree': 2,
+            '2 - disagree': 4,
+        }).equals(self.question.value_counts(['1 - strongly disagree',
+                                              '2 - disagree'])))
 
     def test_distribution_table__no_significance(self):
 
