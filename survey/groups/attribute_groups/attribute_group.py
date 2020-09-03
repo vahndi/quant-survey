@@ -6,14 +6,20 @@ from pandas import Series
 from survey.attributes import CountAttribute
 from survey.attributes import RespondentAttribute, SingleCategoryAttribute
 from survey.attributes import PositiveMeasureAttribute
-from survey.custom_types import CategoricalAttribute, NumericalAttribute, CategoricalAttributeTypes, \
-    NumericalAttributeTypes
-from survey.groups.attribute_groups.categorical_attribute_group import CategoricalAttributeGroup
-from survey.groups.attribute_groups.count_attribute_group import CountAttributeGroup
-from survey.groups.attribute_groups.numerical_attribute_group import NumericalAttributeGroup
-from survey.groups.attribute_groups.positive_measure_attribute_group import PositiveMeasureAttributeGroup
-from survey.groups.attribute_groups.single_category_attribute_group import SingleCategoryAttributeGroup
-from survey.mixins.containers.attribute_container_mixin import AttributeContainerMixin
+from survey.custom_types import CategoricalAttribute, NumericalAttribute, \
+    CategoricalAttributeTypes, NumericalAttributeTypes
+from survey.groups.attribute_groups.categorical_attribute_group import \
+    CategoricalAttributeGroup
+from survey.groups.attribute_groups.count_attribute_group import \
+    CountAttributeGroup
+from survey.groups.attribute_groups.numerical_attribute_group import \
+    NumericalAttributeGroup
+from survey.groups.attribute_groups.positive_measure_attribute_group import \
+    PositiveMeasureAttributeGroup
+from survey.groups.attribute_groups.single_category_attribute_group import \
+    SingleCategoryAttributeGroup
+from survey.mixins.containers.attribute_container_mixin import \
+    AttributeContainerMixin
 from survey.mixins.containers.item_container_mixin import ItemContainerMixin
 from survey.respondents import Respondent
 from survey.utils.type_detection import all_are
@@ -25,8 +31,9 @@ class AttributeGroup(ItemContainerMixin, AttributeContainerMixin, object):
     """
     def __init__(
             self,
-            items: Dict[str,
-                        Union[RespondentAttribute, 'AttributeGroup']] = None
+            items: Dict[
+                str, Union[RespondentAttribute, 'AttributeGroup']
+            ] = None
     ):
         """
         Create a new AttributeGroup.

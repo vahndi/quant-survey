@@ -46,7 +46,7 @@ def count_coincidences(
     :param column_1_order: The order to sort values in the first column.
     :param column_2_order: The order to sort values in the second column.
     :return: DataFrame with column_1 values as columns and column_2 values as
-    index, sorted by the given order.
+             index, sorted by the given order.
     """
     data_1 = data_1.copy()
     data_2 = data_2.copy()
