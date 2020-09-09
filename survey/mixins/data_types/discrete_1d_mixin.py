@@ -114,3 +114,7 @@ class Discrete1dMixin(Numerical1dMixin):
         count_data = count_data[cols]
 
         return count_data
+
+    def unique(self) -> list:
+
+        return sorted(self._data.unique())

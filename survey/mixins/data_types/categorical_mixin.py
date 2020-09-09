@@ -1,5 +1,7 @@
 from typing import Union, List, Dict, Optional
 
+from pandas import Series
+
 from survey.compound_types import GroupPairs
 from survey.utils.processing import get_group_pairs
 
@@ -8,6 +10,7 @@ class CategoricalMixin(object):
 
     _categories:  Union[List[str], Dict[str, int]]
     _ordered: bool
+    _data: Series
     name: str
 
     def _set_categories(self, categories: Union[List[str], Dict[str, int]]):
@@ -17,6 +20,10 @@ class CategoricalMixin(object):
     @property
     def categories(self) -> Union[List[str], Dict[str, int]]:
         return self._categories
+
+    def unique(self) -> list:
+
+        return self._data.unique()
 
     @property
     def category_names(self) -> List[str]:

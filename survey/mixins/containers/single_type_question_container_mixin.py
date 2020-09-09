@@ -7,6 +7,7 @@ from pandas import notnull, Series, DataFrame
 
 from survey.compound_types import StringOrStringTuple
 from survey.mixins.data_types.categorical_mixin import CategoricalMixin
+from survey.mixins.data_types.discrete_1d_mixin import Discrete1dMixin
 from survey.questions._abstract.question import Question
 
 
@@ -90,24 +91,24 @@ class SingleTypeQuestionContainerMixin(Generic[Q]):
     def split_question(
             cls: Type[T],
             question: Q,
-            split_by: Union[CategoricalMixin,
-                            List[CategoricalMixin]]
+            split_by: Union[CategoricalMixin, Discrete1dMixin,
+                            List[CategoricalMixin], List[Discrete1dMixin]]
     ) -> T:
         """
         Create a new QuestionGroup by splitting an existing Question
-        by the values of a Categorical question or attribute.
+        by the values of a Categorical or Discrete Question or Attribute.
         """
         if not isinstance(split_by, list):
             split_by = [split_by]
         split_by_names = [question.name for question in split_by]
-        split_by_categories = [s.category_names for s in split_by]
+        split_by_values = [s.unique() for s in split_by]
         questions = {}
-        for category_combo in list(product(*split_by_categories)):
+        for category_combo in list(product(*split_by_values)):
             conditions = {
                 name: category
                 for name, category in zip(split_by_names, category_combo)
             }
-            if len(split_by_categories) == 1:
+            if len(split_by_values) == 1:
                 questions[category_combo[0]] = question.where(**conditions)
             else:
                 questions[tuple(category_combo)] = question.where(**conditions)
