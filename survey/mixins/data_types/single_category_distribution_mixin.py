@@ -47,7 +47,8 @@ class SingleCategoryDistributionMixin(object):
 
         ax = plot_categorical_distribution(
             categorical_data=data,
-            color=color, edge_color=edge_color, line_width=line_width,
+            color=color, edge_color=edge_color,
+            line_width=line_width,
             **kwargs
         )
 

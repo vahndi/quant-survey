@@ -97,6 +97,17 @@ class Survey(QuestionGroup, AttributeGroup, object):
             except:
                 print(f'Warning - could not set dynamic group for {group}')
 
+    def question(self, name: str) -> Optional[Question]:
+        """
+        Return the Question with the given name.
+
+        :param name: Name of the question to return.
+        """
+        try:
+            return [q for q in self._questions if q.name == name][0]
+        except IndexError:
+            return None
+
     @property
     def name(self) -> str:
         """

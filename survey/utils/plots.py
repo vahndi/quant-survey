@@ -225,7 +225,8 @@ def plot_categorical_distribution(
         drop_na: bool = True,
         max_axis_label_chars: int = None,
         grid: bool = False,
-        y_lim: Optional[Tuple[int, int]] = None
+        y_lim: Optional[Tuple[int, int]] = None,
+        alpha: float = 1.0
 ) -> Axes:
     """
     Create a bar-plot of the counts of a categorical variable.
@@ -270,7 +271,7 @@ def plot_categorical_distribution(
     else:
         item_counts.index = wrap_text(item_counts.index, max_axis_label_chars)
     item_counts.plot(kind=plot_type, ax=ax, color=color, edgecolor=edge_color,
-                     linestyle=line_style, linewidth=line_width)
+                     linestyle=line_style, linewidth=line_width, alpha=alpha)
     # add percentages
     item_pcts = 100 * item_counts.div(
         len(categorical_data) if not drop_na

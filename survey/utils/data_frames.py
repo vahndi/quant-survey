@@ -141,9 +141,11 @@ def count_coincidences(
     )
     cp_lists = []
     for d1, d2 in product(datas_1, datas_2):
+        d1_name = d1.name if d1.name in data.columns else d1.name + '_x'
+        d2_name = d2.name if d2.name in data.columns else d2.name + '_y'
         cp_list = data[[
-            d1.name, d2.name
-        ]].groupby([d1.name, d2.name]).size().reset_index()
+            d1_name, d2_name
+        ]].groupby([d1_name, d2_name]).size().reset_index()
         cp_list.columns = [column_1, column_2, 'count']
         cp_lists.append(cp_list)
     cp_table = pivot_table(
