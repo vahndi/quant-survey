@@ -90,7 +90,8 @@ class SingleTypeQuestionContainerMixin(Generic[Q]):
     def split_question(
             cls: Type[T],
             question: Q,
-            split_by: Union[CategoricalMixin, List[CategoricalMixin]]
+            split_by: Union[CategoricalMixin,
+                            List[CategoricalMixin]]
     ) -> T:
         """
         Create a new QuestionGroup by splitting an existing Question

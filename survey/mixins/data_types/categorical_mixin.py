@@ -38,7 +38,7 @@ class CategoricalMixin(object):
 
     def group_pairs(self, ordered: Optional[bool] = None) -> GroupPairs:
         """
-        Return all pairs of groups of answer choices  e.g. (a, [b, c]), ([a, b], c), ([a, c], b)
+        Return all pairs of groups of answer choices e.g. (a, [b, c]), ([a, b], c), ([a, c], b)
 
         :param ordered: Whether to return ordered pairs only.
                         If not specified, use the `_ordered` property of the Categorical item.
