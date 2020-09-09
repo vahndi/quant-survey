@@ -48,7 +48,7 @@ class LikertQuestion(
         """
         Create a new Likert-scale question.
 
-        :param name: A shorthand name for the question.
+        :param name: A pythonic name for the question.
         :param text: The text asked in the question.
         :param categories: The dict of possible choices, mapping name -> value.
         :param data: Optional pandas Series of responses.

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Callable, Optional
 
 from numpy import nan
 from pandas import Series, isnull
@@ -9,7 +9,8 @@ from survey.constants import CATEGORY_SPLITTER
 
 class DataMixin(object):
 
-    _data: Series
+    _data: Optional[Series]
+    _validate_data: Callable[[Series], None]
 
     def _set_data(self, data: Series):
 
@@ -30,8 +31,9 @@ class DataMixin(object):
 
 class CategoricalDataMixin(object):
 
-    _data: Series
+    _data: Optional[Series]
     name: str
+    _validate_data: Callable[[Series], None]
 
     def _set_data(self, data: Series):
         if data is not None:

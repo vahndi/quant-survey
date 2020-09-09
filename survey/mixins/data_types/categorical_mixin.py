@@ -38,16 +38,24 @@ class CategoricalMixin(object):
 
     def group_pairs(self, ordered: Optional[bool] = None) -> GroupPairs:
         """
-        Return all pairs of groups of answer choices  e.g. (a, [b, c]), ([a, b], c), ([a, c], b)
+        Return all pairs of groups of answer choices
+        e.g. for (a, b, c) return [(a, [b, c]), ([a, b], c), ([a, c], b)]
 
         :param ordered: Whether to return ordered pairs only.
-                        If not specified, use the `_ordered` property of the Categorical item.
+                        If not specified, use the `_ordered` property of the
+                        Categorical item.
         """
         ordered = ordered if ordered is not None else self._ordered
         if ordered:
-            return get_group_pairs(items=self.category_names, ordered=True, include_empty=False)
+            return get_group_pairs(
+                items=self.category_names,
+                ordered=True, include_empty=False
+            )
         else:
-            return get_group_pairs(items=self.category_names, ordered=False, include_empty=False)
+            return get_group_pairs(
+                items=self.category_names,
+                ordered=False, include_empty=False
+            )
 
     @property
     def ordered(self) -> bool:
