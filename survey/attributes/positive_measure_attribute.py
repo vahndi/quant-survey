@@ -23,7 +23,7 @@ class PositiveMeasureAttribute(
         """
         Create a new Positive Measure attribute.
 
-        :param name: A shorthand name for the attribute.
+        :param name: A pythonic name for the attribute.
         :param text: The text of the attribute.
         :param data: Optional pandas Series of responses.
         """

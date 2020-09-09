@@ -164,29 +164,6 @@ class LikertQuestionGroup(
         """
         return other.__rshift__(self)
 
-    def __getitem__(self, item) -> LikertQuestion:
-        """
-        Return the question with the given key.
-        """
-        return self._item_dict[item]
-
-    def __setitem__(self, index, value: LikertQuestion):
-        """
-        Add a new question to the group.
-
-        :param index: The accessor key for the question.
-        :param value: The question.
-        """
-        if not isinstance(value, LikertQuestion):
-            raise TypeError('Value to set is not a LikertQuestion')
-        self._item_dict[index] = value
-        try:
-            setattr(self, index, value)
-        except:
-            print(f'Warning - could not set dynamic property '
-                  f'for Question: {index}')
-        self._questions.append(value)
-
     def merge_with(
             self, other: 'LikertQuestionGroup'
     ) -> 'LikertQuestionGroup':
@@ -212,7 +189,8 @@ class LikertQuestionGroup(
         ax = ax or new_axes()
         if 'cmap' not in kwargs:
             kwargs['cmap'] = 'Blues'
-        data = DataFrame({k: q.counts() for k, q in self.item_dict.items()})
+        data = DataFrame({k: q.value_counts()
+                          for k, q in self.item_dict.items()})
         heatmap(data=data, ax=ax, annot=True, fmt='d', **kwargs)
         AxesFormatter(ax).set_text(
             x_label='Question', y_label='Rating'
@@ -285,7 +263,7 @@ class LikertQuestionGroup(
                 'text': question.text,
                 'name': question.name
             }
-            record = {**record, **question.counts().to_dict()}
+            record = {**record, **question.value_counts().to_dict()}
             records.append(record)
         data = DataFrame(records)
         data = data.set_index(['key', 'text', 'name']).fillna(0).astype(int)

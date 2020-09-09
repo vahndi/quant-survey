@@ -48,7 +48,7 @@ class LikertQuestion(
         """
         Create a new Likert-scale question.
 
-        :param name: A shorthand name for the question.
+        :param name: A pythonic name for the question.
         :param text: The text asked in the question.
         :param categories: The dict of possible choices, mapping name -> value.
         :param data: Optional pandas Series of responses.
@@ -319,7 +319,10 @@ class LikertQuestion(
         new_question.survey = self.survey
         return new_question
 
-    def count(self, values: Optional[Union[str, List[str]]] = None) -> int:
+    def count(
+            self,
+            values: Optional[Union[str, List[str]]] = None
+    ) -> int:
         """
         Return a count of the total number of responses matching the given value
         or values.
@@ -333,14 +336,20 @@ class LikertQuestion(
             values = [values]
         return len(self._data.loc[self._data.isin(values)])
 
-    def counts(self, values: Optional[List[str]] = None) -> Series:
+    def value_counts(
+            self,
+            values: Optional[Union[str, List[str]]] = None
+    ) -> Series:
         """
-        Return counts of number of responses matching each value in values.
+        Return counts of number of responses matching each value in the given
+        value or values.
 
         :param values: A response value or list of values to count instances of.
         """
         if values is None:
             values = self.category_names
+        if not isinstance(values, list):
+            values = [values]
         counts = self._data.value_counts()
         return Series(
             index=values,
@@ -398,7 +407,6 @@ class LikertQuestion(
             f"'{name}': {value}"
             for name, value in self.categories.items()
         )
-
         return (
             f"LikertQuestion("
             f"\n\tname='{self.name}',"

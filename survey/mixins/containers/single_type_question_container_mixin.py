@@ -161,3 +161,26 @@ class SingleTypeQuestionContainerMixin(Generic[Q]):
             mapper(key): question
             for key, question in self._item_dict.items()
         })
+
+    def __getitem__(self, item) -> Q:
+        """
+        Return the question with the given key.
+        """
+        return self._item_dict[item]
+
+    def __setitem__(self, index, value: Q):
+        """
+        Add a new question to the group.
+
+        :param index: The accessor key for the question.
+        :param value: The question.
+        """
+        if not isinstance(value, self.Q):
+            raise TypeError(f'Value to set is not a {self.Q.__name__}')
+        self._item_dict[index] = value
+        try:
+            setattr(self, index, value)
+        except:
+            print(f'Warning - could not set dynamic property'
+                  f' for Question: {index}')
+        self._questions.append(value)

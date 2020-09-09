@@ -1,12 +1,9 @@
-from pandas import concat, DataFrame
-from typing import List, TypeVar, Dict
-
-from survey.questions._abstract.question import Question
-from typing import List, TypeVar
+from typing import Dict, List, TypeVar
 
 from pandas import concat, DataFrame
 
 from survey.questions._abstract.question import Question
+
 
 T = TypeVar('T', bound='QuestionContainerMixin')
 

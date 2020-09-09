@@ -39,7 +39,7 @@ class MultiChoiceQuestion(
         """
         Create a new multiple choice question.
 
-        :param name: A shorthand name for the question.
+        :param name: A pythonic name for the question.
         :param text: The text asked in the question.
         :param categories: The list of possible choices.
         :param ordered: Whether the choices passed are ordered (low to high).
@@ -51,6 +51,7 @@ class MultiChoiceQuestion(
         self._ordered = ordered
 
     def _validate_data(self, data: Series):
+
         unique = set([selection for ix, item in data.dropna().iteritems()
                      for selection in item.split(CATEGORY_SPLITTER)
                      if notnull(selection)])
@@ -213,16 +214,16 @@ class MultiChoiceQuestion(
         :param y_label: Label for the y-axis.
         """
         data = data if data is not None else self._data
+        if data is None:
+            raise ValueError('No data!')
+        if len(data) == 0:
+            return ax
         if title is None:
             title = self.text
         if x_label is None:
             x_label = self.name if not transpose else '# Respondents'
         if y_label is None:
             y_label = '# Respondents' if not transpose else self.name
-        if data is None:
-            raise ValueError('No data!')
-        if len(data) == 0:
-            return ax
         features = self.make_features(
             answers=data, drop_na=drop_na, naming='{{choice}}'
         )

@@ -23,7 +23,7 @@ class CountQuestion(
         """
         Create a new Count Question.
 
-        :param name: A shorthand name for the question.
+        :param name: A pythonic name for the question.
         :param text: The text of the question.
         :param data: Optional pandas Series of responses.
         """

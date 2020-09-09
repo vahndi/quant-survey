@@ -1,12 +1,14 @@
 from itertools import product
+from typing import List, Tuple, Optional
+
 from matplotlib.axes import Axes
 from pandas import Series, DataFrame
-from probability.distributions import BetaBinomial, BetaBinomialConjugate
-from typing import List, Tuple, Optional
+from probability.distributions import BetaBinomialConjugate
 
 from survey.utils.data_frames import count_coincidences
 from survey.utils.plots import plot_pt
-from survey.utils.probability.prob_utils import create_jpt, create_cpt, create_jct
+from survey.utils.probability.prob_utils import create_jpt, create_cpt, \
+    create_jct
 
 
 class SingleCategoryPTMixin(object):
@@ -14,6 +16,73 @@ class SingleCategoryPTMixin(object):
     data: Series
     category_names: List[str]
     name: str
+
+    def _draw_significance_values(
+            self, other: 'SingleCategoryPTMixin',
+            sig_colors: Tuple[str, str],
+            sig_values: Tuple[float, float],
+            transpose: bool,
+            ax: Axes
+    ):
+
+        counts = count_coincidences(
+            data_1=self.data, data_2=other.data,
+            column_1=self.name, column_2=other.name,
+            column_1_order=self.category_names,
+            column_2_order=other.category_names
+        )
+        # calculate p(X=x,Y=y) > mean(p(X=~x, Y=~y)) for each x and y
+        n_total = counts.sum().sum()  # total number of coincidences
+        results = []
+        for cat_1, cat_2 in product(self.category_names,
+                                    other.category_names):
+            m_event = counts.loc[cat_2, cat_1]  # coincidences with value combo
+            m_any = (
+                (n_total - m_event) /  # coincidences not with value combo
+                (len(self.category_names) *
+                 len(other.category_names) - 1)  # number of other value combos
+            )  # average of all other coincidence counts
+            results.append({
+                self.name: cat_1,
+                other.name: cat_2,
+                'p': (
+                        BetaBinomialConjugate(
+                            1, 1, n_total, m_event
+                        ).posterior() >
+                        BetaBinomialConjugate(
+                            1, 1, n_total, m_any
+                        ).posterior()
+                )
+            })
+        results_data = DataFrame(results)
+        # define plot offsets
+        min_add = 0.05
+        max_add = 0.95
+        line_width = 2
+        # draw significance rectangles
+        for _, row in results_data.iterrows():
+            color = None
+            if row['p'] >= sig_values[0]:
+                color = sig_colors[0]
+            elif row['p'] < sig_values[1]:
+                color = sig_colors[1]
+            if color is None:
+                continue
+            if not transpose:
+                x = self.category_names.index(row[self.name])
+                y = other.category_names.index(row[other.name])
+            else:
+                y = self.category_names.index(row[self.name])
+                x = other.category_names.index(row[other.name])
+
+            ax.plot([x + min_add, x + max_add], [y + min_add, y + min_add],
+                    color, linewidth=line_width)
+            ax.plot([x + min_add, x + max_add], [y + max_add, y + max_add],
+                    color, linewidth=line_width)
+            ax.plot([x + min_add, x + min_add], [y + min_add, y + max_add],
+                    color, linewidth=line_width)
+            ax.plot([x + max_add, x + max_add], [y + min_add, y + max_add],
+                    color, linewidth=line_width)
 
     def plot_jpt(self, other: 'SingleCategoryPTMixin',
                  significance: bool = False,
@@ -55,69 +124,14 @@ class SingleCategoryPTMixin(object):
         ax = plot_pt(pt=jpt, **kwargs)
 
         # draw significance values
-        if significance:
-            counts = count_coincidences(
-                data_1=self.data, data_2=other_data,
-                column_1=self.name, column_2=other.name,
-                column_1_order=self.category_names,
-                column_2_order=other.category_names
+        if significance and isinstance(other, SingleCategoryPTMixin):
+            self._draw_significance_values(
+                other=other,
+                sig_colors=sig_colors,
+                sig_values=sig_values,
+                transpose=kwargs['transpose'],
+                ax=ax
             )
-            if isinstance(other, SingleCategoryPTMixin):
-                n_total = counts.sum().sum()
-                results = []
-                for cat_1, cat_2 in product(self.category_names,
-                                            other.category_names):
-                    m_event = counts.loc[cat_2, cat_1]
-                    m_any = (
-                        (n_total - m_event) /
-                        (len(self.category_names) *
-                         len(other.category_names) - 1)
-                    )
-                    results.append({
-                        self.name: cat_1,
-                        other.name: cat_2,
-                        'p': (
-                            BetaBinomialConjugate(
-                                1, 1, n_total, m_event
-                            ).posterior() >
-                            BetaBinomialConjugate(
-                                1, 1, n_total, m_any
-                            ).posterior()
-                        )
-                    })
-                results_data = DataFrame(results)
-            else:
-                raise NotImplementedError(
-                    'significance not implemented for MultiCategories'
-                )
-
-            min_add = 0.05
-            max_add = 0.95
-            line_width = 2
-
-            for _, row in results_data.iterrows():
-                color = None
-                if row['p'] >= sig_values[0]:
-                    color = sig_colors[0]
-                elif row['p'] < sig_values[1]:
-                    color = sig_colors[1]
-                if color is None:
-                    continue
-                if not kwargs['transpose']:
-                    x = self.category_names.index(row[self.name])
-                    y = other.category_names.index(row[other.name])
-                else:
-                    y = self.category_names.index(row[self.name])
-                    x = other.category_names.index(row[other.name])
-
-                ax.plot([x + min_add, x + max_add], [y + min_add, y + min_add],
-                        color, linewidth=line_width)
-                ax.plot([x + min_add, x + max_add], [y + max_add, y + max_add],
-                        color, linewidth=line_width)
-                ax.plot([x + min_add, x + min_add], [y + min_add, y + max_add],
-                        color, linewidth=line_width)
-                ax.plot([x + max_add, x + max_add], [y + min_add, y + max_add],
-                        color, linewidth=line_width)
 
         return ax
 
@@ -314,67 +328,13 @@ class SingleCategoryPTMixin(object):
         ax = plot_pt(pt=jct, **kwargs)
 
         # draw significance values
-        if significance:
-            counts = count_coincidences(
-                data_1=self.data, data_2=other_data,
-                column_1=self.name, column_2=other.name,
-                column_1_order=self.categories,
-                column_2_order=other.category_names
+        if significance and isinstance(other, SingleCategoryPTMixin):
+            self._draw_significance_values(
+                other=other,
+                sig_colors=sig_colors,
+                sig_values=sig_values,
+                transpose=kwargs['transpose'],
+                ax=ax
             )
-            if isinstance(other, SingleCategoryPTMixin):
-                n_total = counts.sum().sum()
-                results = []
-                for cat_1, cat_2 in product(self.category_names,
-                                            other.category_names):
-                    m_event = counts.loc[cat_2, cat_1]
-                    m_any = (
-                        (n_total - m_event) /
-                        (len(self.category_names) *
-                         len(other.category_names) - 1)
-                    )
-                    results.append({
-                        self.name: cat_1,
-                        other.name: cat_2,
-                        'p': (
-                            BetaBinomialConjugate(
-                                1, 1, n_total, m_event
-                            ).posterior() > BetaBinomialConjugate(
-                                1, 1, n_total, m_any
-                            ).posterior()
-                        )
-                    })
-                results_data = DataFrame(results)
-            else:
-                raise NotImplementedError(
-                    'significance not implemented for MultiCategories'
-                )
-
-            min_add = 0.05
-            max_add = 0.95
-            line_width = 2
-
-            for _, row in results_data.iterrows():
-                color = None
-                if row['p'] >= sig_values[0]:
-                    color = sig_colors[0]
-                elif row['p'] < sig_values[1]:
-                    color = sig_colors[1]
-                if color is None:
-                    continue
-                if not kwargs['transpose']:
-                    x = self.category_names.index(row[self.name])
-                    y = other.category_names.index(row[other.name])
-                else:
-                    y = self.category_names.index(row[self.name])
-                    x = other.category_names.index(row[other.name])
-
-                ax.plot([x + min_add, x + max_add], [y + min_add, y + min_add],
-                        color, linewidth=line_width)
-                ax.plot([x + min_add, x + max_add], [y + max_add, y + max_add],
-                        color, linewidth=line_width)
-                ax.plot([x + min_add, x + min_add], [y + min_add, y + max_add],
-                        color, linewidth=line_width)
-                ax.plot([x + max_add, x + max_add], [y + min_add, y + max_add],
-                        color, linewidth=line_width)
 
         return ax

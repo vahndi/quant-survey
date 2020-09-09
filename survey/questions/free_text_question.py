@@ -22,7 +22,7 @@ class FreeTextQuestion(NamedMixin, DataMixin, TextualMixin, Question):
         """
         Create a new FreeText Question.
 
-        :param name: A shorthand name for the question.
+        :param name: A pythonic name for the question.
         :param text: The text of the question.
         :param data: Optional pandas Series of responses.
         """

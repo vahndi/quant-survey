@@ -32,7 +32,7 @@ class RankedChoiceQuestion(
         """
         Create a new Ranked Choice question.
 
-        :param name: A shorthand name for the question.
+        :param name: A pythonic name for the question.
         :param text: The text asked in the question.
         :param categories: The list of possible choices.
         :param data: Optional pandas Series of responses.
