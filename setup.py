@@ -4,7 +4,7 @@ from setuptools import find_packages
 setup(
     name='quant-survey',
     packages=find_packages(),
-    version='0.0.002',
+    version='0.0.003',
     license='MIT',
     description='Library for quantitative survey analysis.',
     author='Vahndi Minah',
