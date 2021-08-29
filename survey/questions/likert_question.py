@@ -132,10 +132,10 @@ class LikertQuestion(
                 category_2_count = 0
             num_responses = len(self._data.dropna())
             bb_category_1 = BetaBinomialConjugate(
-                1, 1, num_responses, category_1_count
+                alpha=1, beta=1, n=num_responses, k=category_1_count
             )
             bb_category_2 = BetaBinomialConjugate(
-                1, 1, num_responses, category_2_count
+                alpha=1, beta=1, n=num_responses, k=category_2_count
             )
             results.append({
                 'category_1': category_1,
@@ -366,10 +366,10 @@ class LikertQuestion(
         data_self = self.make_features()
         data_other = other.make_features()
         bb_self = BetaBinomialConjugate(
-            1, 1, len(data_self), data_self.sum()
+            alpha=1, beta=1, n=len(data_self), k=data_self.sum()
         )
         bb_other = BetaBinomialConjugate(
-            1, 1, len(data_other), data_other.sum()
+            alpha=1, beta=1, n=len(data_other), k=data_other.sum()
         )
         return bb_self.posterior() > bb_other.posterior()
 

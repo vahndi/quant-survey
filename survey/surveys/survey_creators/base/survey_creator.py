@@ -47,7 +47,7 @@ class SurveyCreator(object):
         """
         # now
         self.survey_name: str = survey_name
-        self.survey_data_fn: str = (
+        self.survey_data_fn: Path = (
             survey_data_fn if isinstance(survey_data_fn, Path)
             else Path(survey_data_fn)
         )
@@ -322,7 +322,7 @@ class SurveyCreator(object):
                 ))
             else:
                 raise ValueError(
-                    f'Question Type {q_meta.type_name} is not supported'
+                    f'Question Type "{q_meta.type_name}" is not supported'
                 )
             prev_qname = q_meta.name
         # clean up string answers
@@ -368,7 +368,7 @@ class SurveyCreator(object):
                 ))
             else:
                 raise ValueError(
-                    f'Attribute Type {a_meta.type_name} is not supported'
+                    f'Attribute Type "{a_meta.type_name}" is not supported'
                 )
         return respondent_attributes
 
@@ -380,6 +380,8 @@ class SurveyCreator(object):
         """
         Create the Respondent attributes.
         """
+        # TODO: this may throw a reindex on duplicate index if there is an
+        #  attribute with the same name as a question
         respondents = []
         for ix, row in survey_data.iterrows():
             respondent_attrs = row.reindex([

@@ -1,10 +1,8 @@
-from typing import List, Callable, Optional
+from typing import Callable, Optional
 
 from numpy import nan
 from pandas import Series, isnull
 from pandas.core.dtypes.inference import is_number
-
-from survey.constants import CATEGORY_SPLITTER
 
 
 class DataMixin(object):

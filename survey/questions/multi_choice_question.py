@@ -146,8 +146,10 @@ class MultiChoiceQuestion(
             results.append({
                 'category': category,
                 'p': (
-                    BetaBinomialConjugate(1, 1, n_one, m_one).posterior() >
-                    BetaBinomialConjugate(1, 1, n_rest, m_rest).posterior()
+                    BetaBinomialConjugate(
+                        alpha=1, beta=1, n=n_one, k=m_one).posterior() >
+                    BetaBinomialConjugate(
+                        alpha=1, beta=1, n=n_rest, k=m_rest).posterior()
                 )
             })
         return DataFrame(results).set_index('category')['p']
@@ -168,8 +170,10 @@ class MultiChoiceQuestion(
                 'category_1': category_1,
                 'category_2': category_2,
                 'p': (
-                    BetaBinomialConjugate(1, 1, n, m_1).posterior() >
-                    BetaBinomialConjugate(1, 1, n, m_2).posterior()
+                    BetaBinomialConjugate(
+                        alpha=1, beta=1, n=n, k=m_1).posterior() >
+                    BetaBinomialConjugate(
+                        alpha=1, beta=1, n=n, k=m_2).posterior()
                 )
             })
         results_data = DataFrame(results)
@@ -537,8 +541,10 @@ class MultiChoiceQuestion(
             results.append({
                 'category': category,
                 'p': (
-                    BetaBinomialConjugate(1, 1, n_self, m_self).posterior() >
-                    BetaBinomialConjugate(1, 1, n_other, m_other).posterior()
+                    BetaBinomialConjugate(
+                        alpha=1, beta=1, n=n_self, k=m_self).posterior() >
+                    BetaBinomialConjugate(
+                        alpha=1, beta=1, n=n_other, k=m_other).posterior()
                 )
             })
         return DataFrame(results).set_index('category')['p']

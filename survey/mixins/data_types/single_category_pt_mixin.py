@@ -47,10 +47,10 @@ class SingleCategoryPTMixin(object):
                 other.name: cat_2,
                 'p': (
                         BetaBinomialConjugate(
-                            1, 1, n_total, m_event
+                            alpha=1, beta=1, n=n_total, k=m_event
                         ).posterior() >
                         BetaBinomialConjugate(
-                            1, 1, n_total, m_any
+                            alpha=1, beta=1, n=n_total, k=m_any
                         ).posterior()
                 )
             })
@@ -135,7 +135,8 @@ class SingleCategoryPTMixin(object):
 
         return ax
 
-    def plot_cpt(self, condition: 'SingleCategoryPTMixin',
+    def plot_cpt(self,
+                 condition: 'SingleCategoryPTMixin',
                  significance: Optional[str] = None,
                  sig_colors: Tuple[str, str] = ('#00ff00', '#ff0000'),
                  sig_values: Tuple[float, float] = (0.945, 0.055),
@@ -193,9 +194,9 @@ class SingleCategoryPTMixin(object):
                             )
                             p = (
                                 BetaBinomialConjugate(
-                                    1, 1, n_cond, m_prob_cond
+                                    alpha=1, beta=1, n=n_cond, k=m_prob_cond
                                 ).posterior() > BetaBinomialConjugate(
-                                    1, 1, n_cond, m_any
+                                    alpha=1, beta=1, n=n_cond, k=m_any
                                 ).posterior()
                             )
                             results.append({
@@ -214,9 +215,9 @@ class SingleCategoryPTMixin(object):
                             n_any = n - n_cond
                             p = (
                                 BetaBinomialConjugate(
-                                    1, 1, n_cond, m_prob_cond
+                                    n=n_cond, k=m_prob_cond, alpha=1, beta=1,
                                 ).posterior() > BetaBinomialConjugate(
-                                    1, 1, n_any, m_any
+                                    n=n_any, k=m_any, alpha=1, beta=1
                                 ).posterior()
                             )
                             results.append({

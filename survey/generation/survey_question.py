@@ -68,9 +68,6 @@ class SurveyQuestion(object):
                               ['name', 'text', 'randomize', 'choices' 'notes']
         :param choices: DataFrame mapping question names to categories with
                         columns ['name', 'category'].
-        :param features: DataFrame mapping concepts to features with columns
-                         ['concept', 'feature'].
-        :param concept: Name of the concept to get features for.
         :param assignments: DataFrame of Assignment values with columns
                             ['assign_to_group',
                             'assign_if_question', 'assign_if_value']
@@ -205,5 +202,3 @@ class SurveyQuestion(object):
             for choice in self.choices:
                 str_out += f'\t• {choice}\n'
         return str_out
-
-

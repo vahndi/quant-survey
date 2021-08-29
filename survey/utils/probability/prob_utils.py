@@ -1,5 +1,6 @@
-from pandas import DataFrame, Series, concat
 from typing import List, Union
+
+from pandas import DataFrame, Series
 
 from survey.utils.data_frames import count_coincidences
 

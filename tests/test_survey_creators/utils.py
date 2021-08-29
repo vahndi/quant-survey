@@ -2,7 +2,7 @@ from pathlib import Path
 
 proj_path = __file__
 
-while Path(proj_path).name != 'frog_survey':
+while Path(proj_path).name != 'quant-survey':
     proj_path = Path(proj_path).parent
 assets_path = proj_path / 'assets'
 surveys_path = assets_path / 'surveys'

@@ -119,8 +119,10 @@ class RankedChoiceQuestion(
             results.append({
                 'category': category,
                 'p': (
-                    BetaBinomialConjugate(1, 1, n, m_one).posterior() >
-                    BetaBinomialConjugate(1, 1, n, m_rest).posterior()
+                    BetaBinomialConjugate(
+                        alpha=1, beta=1, n=n, k=m_one).posterior() >
+                    BetaBinomialConjugate(
+                        alpha=1, beta=1, n=n, k=m_rest).posterior()
                 )
             })
         return DataFrame(results).set_index('category')['p']
@@ -141,8 +143,10 @@ class RankedChoiceQuestion(
                 'category_1': category_1,
                 'category_2': category_2,
                 'p': (
-                    BetaBinomialConjugate(1, 1, n, m_1).posterior() >
-                    BetaBinomialConjugate(1, 1, n, m_2).posterior()
+                    BetaBinomialConjugate(
+                        alpha=1, beta=1, n=n, k=m_1).posterior() >
+                    BetaBinomialConjugate(
+                        alpha=1, beta=1, n=n, k=m_2).posterior()
                 )
             })
         results_data = DataFrame(results)

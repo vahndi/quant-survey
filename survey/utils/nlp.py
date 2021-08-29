@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
-from mpl_format.io_utils import save_plot
 from nltk import word_tokenize, PorterStemmer, WordNetLemmatizer, \
     RegexpTokenizer
 from nltk.corpus import stopwords
@@ -10,6 +9,8 @@ from numpy.ma import argsort, squeeze
 from pandas import DataFrame, Series
 from typing import List, Tuple, Optional, Set
 from wordcloud import WordCloud
+
+from mpl_format.utils.io_utils import save_plot
 
 
 def stem_sentence(sentence: str) -> str:
@@ -81,11 +82,11 @@ def create_wordcloud_from_tf_idf(
     fig.suptitle(f'{col_split}: {col_split_value} top words by tf-idf scores',
                  fontsize=20)
     fig.subplots_adjust(top=2.3)
-    # create wordcloud
+    # create word cloud
     d = {a: x for a, x in top_words if x > 0}
     wordcloud = WordCloud()
     wordcloud.generate_from_frequencies(frequencies=d)
-    # show wordcloud
+    # show word cloud
     ax.imshow(wordcloud, interpolation='bilinear')
     ax.axis('off')
     if save_fig:

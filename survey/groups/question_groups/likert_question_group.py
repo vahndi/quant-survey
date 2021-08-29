@@ -95,10 +95,10 @@ class LikertQuestionGroup(
                 for k in other_keys
             ], axis=0)
             bb_one = BetaBinomialConjugate(
-                1, 1, len(data_one), data_one.sum()
+                alpha=1, beta=1, n=len(data_one), k=data_one.sum()
             )
             bb_rest = BetaBinomialConjugate(
-                1, 1, len(data_rest), data_rest.sum()
+                alpha=1, beta=1, n=len(data_rest), k=data_rest.sum()
             )
             results.append({
                 'name': key,

@@ -1,11 +1,12 @@
+from typing import List, Union, Tuple, Optional, Dict
+
 from matplotlib.patches import Patch
 from mpl_format.axes.axis_utils import new_axes
 from mpl_format.text.text_utils import wrap_text
 from mpl_toolkits.axes_grid1.mpl_axes import Axes
 from numpy import nan
 from pandas import Series, DataFrame, get_dummies, concat
-from probability.distributions import BetaBinomial, BetaBinomialConjugate
-from typing import List, Union, Tuple, Optional, Dict
+from probability.distributions import BetaBinomialConjugate
 
 from survey.utils.plots import label_pair_bar_plot_pcts
 
@@ -248,8 +249,10 @@ class SingleCategoryMixin(object):
             results.append({
                 'category': category,
                 'p': (
-                    BetaBinomialConjugate(1, 1, n_self, m_self).posterior() >
-                    BetaBinomialConjugate(1, 1, n_other, m_other).posterior()
+                    BetaBinomialConjugate(
+                        alpha=1, beta=1, n=n_self, k=m_self).posterior() >
+                    BetaBinomialConjugate(
+                        alpha=1, beta=1, n=n_other, k=m_other).posterior()
                 )
             })
         results_data = DataFrame(results).set_index('category')['p']
