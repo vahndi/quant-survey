@@ -23,7 +23,8 @@ class CategoricalMixin(object):
 
     def unique(self) -> list:
 
-        return self._data.unique()
+        values = self._data.unique()
+        return [cat for cat in self._categories if cat in values]
 
     @property
     def category_names(self) -> List[str]:
