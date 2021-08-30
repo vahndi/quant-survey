@@ -1,7 +1,7 @@
 from pandas import Series, concat
 from typing import List, Union, Optional
 
-from survey.mixins.data import CategoricalDataMixin
+from survey.mixins.data_mixins import SingleCategoryDataMixin
 from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.mixins.data_types.single_category_distribution_mixin import \
     SingleCategoryDistributionMixin
@@ -18,7 +18,7 @@ from survey.questions._abstract.question import Question
 
 class SingleChoiceQuestion(
     NamedMixin,
-    CategoricalDataMixin,
+    SingleCategoryDataMixin,
     CategoricalMixin,
     SingleCategoryMixin,
     SingleCategoryDistributionMixin,
@@ -45,6 +45,8 @@ class SingleChoiceQuestion(
         """
         self._set_name_and_text(name, text)
         self._set_categories(categories)
+        if data is not None:
+            data = data.astype('category')
         self.data = data
         self._ordered = ordered
 

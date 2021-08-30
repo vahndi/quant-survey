@@ -9,7 +9,7 @@ from mpl_format.text.text_utils import wrap_text
 from pandas import Series, DataFrame, pivot_table, concat
 from probability.distributions import BetaBinomialConjugate
 
-from survey.mixins.data import CategoricalDataMixin
+from survey.mixins.data_mixins import SingleCategoryDataMixin
 from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.mixins.data_types.single_category_distribution_mixin import \
     SingleCategoryDistributionMixin
@@ -29,7 +29,7 @@ from survey.utils.plots import plot_categorical_distributions, \
 
 class LikertQuestion(
     NamedMixin,
-    CategoricalDataMixin,
+    SingleCategoryDataMixin,
     CategoricalMixin,
     SingleCategoryDistributionMixin,
     SingleCategorySignificanceMixin,
@@ -61,6 +61,8 @@ class LikertQuestion(
             (val_to_name[val], val)
             for val in sorted(val_to_name.keys())
         ]))
+        if data is not None:
+            data = data.astype('category')
         self.data = data
         self._ordered = True
 

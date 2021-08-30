@@ -7,14 +7,14 @@ from nltk.tokenize.api import TokenizerI
 from pandas import Series, DataFrame
 from typing import List, Optional, Set, Union
 
-from survey.mixins.data import DataMixin
+from survey.mixins.data_mixins import ObjectDataMixin
 from survey.mixins.data_types.textual_mixin import TextualMixin
 from survey.mixins.named import NamedMixin
 from survey.questions._abstract.question import Question
 from survey.utils.nlp import pre_process_text_series
 
 
-class FreeTextQuestion(NamedMixin, DataMixin, TextualMixin, Question):
+class FreeTextQuestion(NamedMixin, ObjectDataMixin, TextualMixin, Question):
     """
     A Question with a Free-Text response.
     """

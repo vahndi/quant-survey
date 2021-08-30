@@ -5,7 +5,7 @@ from pandas import Series, isnull
 from pandas.core.dtypes.inference import is_number
 
 
-class DataMixin(object):
+class ObjectDataMixin(object):
 
     _data: Optional[Series]
     _validate_data: Callable[[Series], None]
@@ -27,7 +27,33 @@ class DataMixin(object):
             self._data = data
 
 
-class CategoricalDataMixin(object):
+class NumericDataMixin(object):
+
+    _data: Optional[Series]
+    _validate_data: Callable[[Series], None]
+
+    def _set_data(self, data: Series):
+
+        self.data = data
+
+    @property
+    def data(self) -> Series:
+        return self._data
+
+    @data.setter
+    def data(self, data: Series):
+        if data is None:
+            self._data = None
+        else:
+            self._validate_data(data)
+            try:
+                data = data.astype(int)
+            except ValueError:
+                data = data.astype(float)
+            self._data = data
+
+
+class SingleCategoryDataMixin(object):
 
     _data: Optional[Series]
     name: str
@@ -55,4 +81,4 @@ class CategoricalDataMixin(object):
                       else str(d)
                       for d in data.values],
                 name=self.name
-            )
+            ).astype('category')

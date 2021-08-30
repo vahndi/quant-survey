@@ -9,7 +9,7 @@ from probability.distributions import BetaBinomialConjugate
 from seaborn import heatmap
 
 from survey.constants import CATEGORY_SPLITTER
-from survey.mixins.data import DataMixin
+from survey.mixins.data_mixins import ObjectDataMixin
 from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.mixins.named import NamedMixin
 from survey.questions._abstract.question import Question
@@ -18,7 +18,7 @@ from survey.utils.plots import draw_vertical_dividers, draw_horizontal_dividers
 
 class RankedChoiceQuestion(
     NamedMixin,
-    DataMixin,
+    ObjectDataMixin,
     CategoricalMixin,
     Question
 ):

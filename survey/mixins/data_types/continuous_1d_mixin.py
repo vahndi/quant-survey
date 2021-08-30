@@ -3,9 +3,9 @@ from typing import Optional
 from mpl_format.axes import AxesFormatter
 from mpl_format.axes.axis_utils import new_axes
 from mpl_toolkits.axes_grid1.mpl_axes import Axes
-from numpy import arange, histogram, ndarray, log10
+from numpy import arange, histogram, ndarray
 from pandas import Series, DataFrame
-from seaborn import distplot, kdeplot, displot, histplot
+from seaborn import distplot, kdeplot
 
 from survey.compound_types import Bins
 from survey.mixins.data_types.numerical_1d_mixin import Numerical1dMixin

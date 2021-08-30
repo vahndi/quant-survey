@@ -1,7 +1,8 @@
-from pandas import Series
 from typing import Optional
 
-from survey.mixins.data import DataMixin
+from pandas import Series
+
+from survey.mixins.data_mixins import NumericDataMixin
 from survey.mixins.data_types.continuous_1d_mixin import Continuous1dMixin
 from survey.mixins.data_validation.positive_measure_validation_mixin import \
     PositiveMeasureValidationMixin
@@ -11,7 +12,7 @@ from survey.questions._abstract.question import Question
 
 class PositiveMeasureQuestion(
     NamedMixin,
-    DataMixin,
+    NumericDataMixin,
     PositiveMeasureValidationMixin,
     Continuous1dMixin,
     Question
@@ -28,6 +29,11 @@ class PositiveMeasureQuestion(
         :param data: Optional pandas Series of responses.
         """
         self._set_name_and_text(name, text)
+        if data is not None:
+            try:
+                data = data.astype(int)
+            except ValueError:
+                data = data.astype(float)
         self.data = data
 
     def __repr__(self):

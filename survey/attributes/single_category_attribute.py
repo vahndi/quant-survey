@@ -2,7 +2,7 @@ from pandas import Series
 from typing import List, Union, Optional
 
 from survey.attributes._abstract.respondent_attribute import RespondentAttribute
-from survey.mixins.data import CategoricalDataMixin
+from survey.mixins.data_mixins import SingleCategoryDataMixin
 from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.mixins.data_types.single_category_distribution_mixin import \
     SingleCategoryDistributionMixin
@@ -18,7 +18,7 @@ from survey.mixins.named import NamedMixin
 
 class SingleCategoryAttribute(
     NamedMixin,
-    CategoricalDataMixin,
+    SingleCategoryDataMixin,
     CategoricalMixin,
     SingleCategoryMixin,
     SingleCategorySignificanceMixin,
@@ -36,6 +36,8 @@ class SingleCategoryAttribute(
 
         self._set_name_and_text(name, text)
         self._set_categories(categories)
+        if data is not None:
+            data = data.astype('category')
         self.data = data
         self._ordered = ordered
 

@@ -1,17 +1,18 @@
-from pandas import Series
 from typing import Optional
 
-from survey.mixins.data import DataMixin
+from pandas import Series
+
+from survey.attributes._abstract.respondent_attribute import RespondentAttribute
+from survey.mixins.data_mixins import NumericDataMixin
 from survey.mixins.data_types.discrete_1d_mixin import Discrete1dMixin
 from survey.mixins.data_validation.count_validation_mixin import \
     CountValidationMixin
 from survey.mixins.named import NamedMixin
-from survey.attributes._abstract.respondent_attribute import RespondentAttribute
 
 
 class CountAttribute(
     NamedMixin,
-    DataMixin,
+    NumericDataMixin,
     CountValidationMixin,
     Discrete1dMixin,
     RespondentAttribute
@@ -28,7 +29,12 @@ class CountAttribute(
         :param data: Optional pandas Series of responses.
         """
         self._set_name_and_text(name, text)
-        self._set_data(data)
+        if data is not None:
+            try:
+                data = data.astype(int)
+            except ValueError:
+                data = data.astype(float)
+        self.data = data
 
     def __repr__(self):
 
