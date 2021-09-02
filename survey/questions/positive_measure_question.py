@@ -1,12 +1,13 @@
 from typing import Optional
 
-from pandas import Series
+from pandas import Series, cut, qcut
 
 from survey.mixins.data_mixins import NumericDataMixin
 from survey.mixins.data_types.continuous_1d_mixin import Continuous1dMixin
 from survey.mixins.data_validation.positive_measure_validation_mixin import \
     PositiveMeasureValidationMixin
 from survey.mixins.named import NamedMixin
+from survey.questions.single_choice_question import SingleChoiceQuestion
 from survey.questions._abstract.question import Question
 
 
@@ -35,6 +36,27 @@ class PositiveMeasureQuestion(
             except ValueError:
                 data = data.astype(float)
         self.data = data
+
+    def to_single_choice(
+            self, method: str, num_categories: int
+    ) -> SingleChoiceQuestion:
+        """
+        Quantize the data and convert to a SingleChoiceQuestion.
+
+        :param method: Pandas method to slice the data. One of {'cut', 'qcut'}.
+        :param num_categories: Number of categories to create.
+        """
+        if method == 'cut':
+            data = cut(self.data, num_categories)
+        elif method == 'qcut':
+            data = qcut(self.data, num_categories)
+        else:
+            raise ValueError("method must be one of {'cut', 'qcut'}")
+        return SingleChoiceQuestion(
+            name=self.name, text=self.text,
+            categories=data.cat.categories.to_list(),
+            ordered=True, data=data
+        )
 
     def __repr__(self):
 

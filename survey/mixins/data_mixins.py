@@ -1,7 +1,7 @@
 from typing import Callable, Optional
 
 from numpy import nan
-from pandas import Series, isnull
+from pandas import Series, isnull, Interval
 from pandas.core.dtypes.inference import is_number
 
 
@@ -77,6 +77,7 @@ class SingleCategoryDataMixin(object):
                 index=data.index,
                 data=[nan if isnull(d)
                       else d if type(d) is str
+                      else d if type(d) is Interval
                       else str(int(d)) if is_number(d) and d == int(d)
                       else str(d)
                       for d in data.values],
