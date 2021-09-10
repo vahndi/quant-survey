@@ -31,6 +31,12 @@ class QuestionContainerMixin(object):
             for name, question in self._item_dict.items()
         })
 
+    def to_list(self) -> List[Question]:
+        """
+        Return all the Questions asked in the Survey.
+        """
+        return self._questions
+
     @property
     def keys(self) -> List[str]:
         return list(self._item_dict.keys())

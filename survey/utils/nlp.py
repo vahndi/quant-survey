@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
+from mpl_format.io_utils import save_plot
 from nltk import word_tokenize, PorterStemmer, WordNetLemmatizer, \
     RegexpTokenizer
 from nltk.corpus import stopwords
@@ -9,8 +10,6 @@ from numpy.ma import argsort, squeeze
 from pandas import DataFrame, Series
 from typing import List, Tuple, Optional, Set
 from wordcloud import WordCloud
-
-from mpl_format.utils.io_utils import save_plot
 
 
 def stem_sentence(sentence: str) -> str:

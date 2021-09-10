@@ -29,7 +29,7 @@ class AttributeContainerMixin(object):
 
     def to_list(self) -> List[RespondentAttribute]:
         """
-        Return all the Questions asked in the Survey.
+        Return all the Attributes asked in the Survey.
         """
         return self._attributes
 

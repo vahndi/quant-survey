@@ -47,7 +47,6 @@ class TestAlphaHqCreator(TestCase):
             self.surveys[survey_num] = create_survey(survey_num)
 
     def test_create_47(self):
-
         self.assertIsInstance(self.surveys[47], Survey)
 
     def test_create_53(self):

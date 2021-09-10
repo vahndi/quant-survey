@@ -22,16 +22,15 @@ class TestPositiveMeasureAttribute(TestCase):
     def test_distribution_table__count_only(self):
 
         expected = DataFrame([
-            (-0.5, 0.5, 27),
+            (-0.5, 0.5, 41),
             (0.5, 1.5, 26),
-            (1.5, 2.5, 24),
-            (2.5, 3.5, 9),
-            (3.5, 4.5, 5),
-            (4.5, 5.5, 2),
-            (5.5, 6.5, 2),
-            (6.5, 7.5, 2),
-            (7.5, 8.5, 2),
-            (8.5, 9.5, 1),
+            (1.5, 2.5, 14),
+            (2.5, 3.5, 8),
+            (3.5, 4.5, 2),
+            (4.5, 5.5, 4),
+            (5.5, 6.5, 1),
+            (6.5, 7.5, 3),
+            (7.5, 8.5, 1),
         ], columns=['From Value', 'To Value', 'Count'])
         actual = self.attribute.distribution_table()
         self.assertTrue(expected.equals(actual))

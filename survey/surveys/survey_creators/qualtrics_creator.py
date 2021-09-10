@@ -87,6 +87,6 @@ class QualtricsCreator(SurveyCreator):
                 new_survey_data[qmd.text] = self._get_ranked_choice_data(qmd)
 
         # set index of respondent id
-        new_survey_data.index = self.survey_data['Respondent ID']
+        new_survey_data.index = self.survey_data['Response ID']
 
         self.survey_data = new_survey_data

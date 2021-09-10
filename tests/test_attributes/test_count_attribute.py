@@ -17,7 +17,6 @@ class TestCountAttribute(TestCase):
     def test_distribution_table__count_only(self):
 
         expected = DataFrame([
-            (-0.5, 0.5, 0),
             (0.5, 1.5, 2),
             (1.5, 2.5, 0),
             (2.5, 3.5, 1),
@@ -29,7 +28,6 @@ class TestCountAttribute(TestCase):
     def test_distribution_table__percent_only(self):
 
         expected = DataFrame([
-            (-0.5, 0.5, 0),
             (0.5, 1.5, 0.4),
             (1.5, 2.5, 0),
             (2.5, 3.5, .2),
@@ -42,7 +40,6 @@ class TestCountAttribute(TestCase):
     def test_distribution_table__count_percent(self):
 
         expected = DataFrame([
-            (-0.5, 0.5, 0, 0),
             (0.5, 1.5, 2, 0.4),
             (1.5, 2.5, 0, 0),
             (2.5, 3.5, 1, 0.2),

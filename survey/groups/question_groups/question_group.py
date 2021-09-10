@@ -54,7 +54,7 @@ MixedTypeQuestionGroups = Union[
 
 class QuestionGroup(ItemContainerMixin,
                     QuestionContainerMixin,
-                    AttributeContainerMixin,
+                    # AttributeContainerMixin,
                     object):
 
     def __init__(
