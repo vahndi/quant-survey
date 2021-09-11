@@ -11,7 +11,7 @@ from pandas import Series, DataFrame, pivot_table, concat, isnull, notnull
 from probability.distributions import BetaBinomialConjugate
 
 from survey.constants import CATEGORY_SPLITTER
-from survey.mixins.data_mixins import ObjectDataMixin
+from survey.mixins.data_mixins import MultiCategoryDataMixin
 from survey.mixins.data_types.categorical_mixin import CategoricalMixin
 from survey.mixins.data_types.multi_category_pt_mixin import \
     MultiCategoryPTMixin
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 class MultiChoiceQuestion(
     NamedMixin,
-    ObjectDataMixin,
+    MultiCategoryDataMixin,
     CategoricalMixin,
     MultiCategoryPTMixin,
     Question

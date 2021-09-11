@@ -48,7 +48,7 @@ class TestChoices(TestCase):
                 'question_1': random.choice(format_)
             } for _ in range(100))
             expected_choices = {
-                expected_order[i]: i + 1
+                str(expected_order[i]): i + 1
                 for i in range(len(expected_order))
             }
             choices = get_likert_choices(orders_meta=orders_meta,

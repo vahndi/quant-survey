@@ -121,6 +121,7 @@ class SurveyCreator(object):
         questions_metadata = read_excel(metadata, 'questions')
         attributes_metadata = read_excel(metadata, 'attributes')
         orders_metadata = read_excel(metadata, 'orders')
+        orders_metadata['value'] = orders_metadata['value'].astype(str)
         # filter to specified survey
         if None not in (self.survey_id_col, self.survey_id):
             questions_metadata = self._filter_to_survey(questions_metadata)
