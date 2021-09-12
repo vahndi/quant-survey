@@ -147,7 +147,8 @@ class SurveyCreator(object):
                 f'The following categories clash with attribute names. '
                 f'Rename attributes or categories.\n{a_name_errors}'
             )
-        # create ordered choices for questions with shared choices
+        # create ordered choices for questions and attributes with shared
+        # choices
         for meta in (attributes_metadata, questions_metadata):
             for idx, row in meta.iterrows():
                 if notnull(row['categories']):

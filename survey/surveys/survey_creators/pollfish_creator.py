@@ -1,8 +1,7 @@
-from re import match
 from typing import List
 
-from pandas import read_excel, DataFrame, Series, notnull, concat, ExcelFile, \
-    isnull, pivot_table
+from pandas import read_excel, DataFrame, Series, notnull, concat, isnull, \
+    ExcelFile
 from stringcase import snakecase
 
 from survey import Survey
@@ -26,11 +25,106 @@ class PollfishCreator(SurveyCreator):
             else:
                 new_cols.append(col)
         data.columns = new_cols
+        # replace category values in original survey data
+        questions = read_excel(self.metadata_fn, sheet_name='questions')
+        attributes = read_excel(self.metadata_fn, sheet_name='attributes')
+        questions = concat([questions, attributes])
+        orders = read_excel(self.metadata_fn, sheet_name='orders')
+        for _, question_data in questions.iterrows():
+            category_name = question_data['categories']
+            if isnull(category_name):
+                continue
+            question_cats = orders.loc[orders['category'] == category_name]
+            question_cats = question_cats.dropna(subset=['replace_value'])
+            if not len(question_cats):
+                continue
+            to_replace = question_cats.set_index('value')[
+                'replace_value'].to_dict()
+            type_name = question_data['type_name']
+            if isnull(question_data['repeat']):
+                if type_name in (
+                        'SingleChoice', 'SingleChoiceQuestion',
+                        'Likert', 'LikertQuestion',
+                        'SingleCategory', 'SingleCategoryAttribute',
+                        'MultiChoice', 'MultiChoiceQuestion'
+                ):
+                    data[question_data['text']] = data[
+                        question_data['text']].replace(to_replace=to_replace)
+                else:
+                    raise TypeError(f'Cannot do value replacement '
+                                    f'for type {type_name}')
+            else:
+                raise TypeError(f'Cannot do value replacement for repeat '
+                                f'questions')
         # pre-clean
         if self.pre_clean is not None:
             data = self.pre_clean(data)
 
         self.survey_data = data
+
+    def read_metadata(self):
+        """
+        Read the question, attribute and order metadata from the Excel
+        metadata file.
+        """
+        metadata = ExcelFile(self.metadata_fn)
+        # read metadata
+        questions_metadata = read_excel(metadata, 'questions')
+        attributes_metadata = read_excel(metadata, 'attributes')
+        orders_metadata = read_excel(metadata, 'orders')
+        # replace `value` with `replace_value` where applicable
+        orders_metadata['value'] = orders_metadata.apply(
+            lambda row: row['replace_value'] if notnull(row['replace_value'])
+                        else row['value'],
+            axis=1
+        )
+        # filter to unique(category, value)
+        orders_metadata['value'] = orders_metadata['value'].astype(str)
+        # convert to strings
+        orders_metadata = orders_metadata.drop_duplicates(
+            subset=['category', 'value'])
+        # filter to specified survey
+        if None not in (self.survey_id_col, self.survey_id):
+            questions_metadata = self._filter_to_survey(questions_metadata)
+            attributes_metadata = self._filter_to_survey(attributes_metadata)
+            orders_metadata = self._filter_to_survey(orders_metadata)
+        # check for clashes in question, attribute and category names
+        category_names = sorted(orders_metadata['category'].unique())
+        q_name_errors = []
+        for q_name in sorted(questions_metadata['name'].unique()):
+            if q_name in category_names:
+                q_name_errors.append(q_name)
+        if q_name_errors:
+            raise ValueError(
+                f'The following categories clash with question names. '
+                f'Rename questions or categories.\n{q_name_errors}'
+            )
+        a_name_errors = []
+        for a_name in sorted(attributes_metadata['name'].unique()):
+            if a_name in category_names:
+                a_name_errors.append(a_name)
+        if a_name_errors:
+            raise ValueError(
+                f'The following categories clash with attribute names. '
+                f'Rename attributes or categories.\n{a_name_errors}'
+            )
+        # create ordered choices for questions with shared choices
+        for meta in (attributes_metadata, questions_metadata):
+            for idx, row in meta.iterrows():
+                if notnull(row['categories']):
+                    q_name = row['name']
+                    order_value = row['categories']
+                    if q_name == order_value:
+                        continue  # already assigned to the question
+                    ordered_choices = orders_metadata[
+                        orders_metadata['category'] == order_value
+                        ].copy()
+                    ordered_choices['category'] = q_name
+                    orders_metadata = concat([orders_metadata, ordered_choices])
+        # set member variables
+        self.questions_metadata = questions_metadata
+        self.attributes_metadata = attributes_metadata
+        self.orders_metadata = orders_metadata
 
     def _get_single_column_data(
             self,
