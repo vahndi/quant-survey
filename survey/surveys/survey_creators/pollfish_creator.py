@@ -4,7 +4,6 @@ from pandas import read_excel, DataFrame, Series, notnull, concat, isnull, \
     ExcelFile
 from stringcase import snakecase
 
-from survey import Survey
 from survey.constants import CATEGORY_SPLITTER
 from survey.surveys.metadata import QuestionMetadata, AttributeMetadata
 from survey.surveys.survey_creators import SurveyCreator
@@ -350,25 +349,3 @@ class PollfishCreator(SurveyCreator):
         new_survey_data.index = self.survey_data['ID']
 
         self.survey_data = new_survey_data
-
-
-survey_data_fn = '/Users/vahndi.minah/Desktop/gitcode/dev/quant-survey/' \
-                 'assets/surveys/pollfish/surveys/' \
-                 'Pollfish_Example_Survey_253227526_en.xls'
-metadata_fn = '/Users/vahndi.minah/Desktop/gitcode/dev/quant-survey/assets/' \
-              'surveys/pollfish/metadata/survey-metadata.xlsx'
-
-
-def create_survey() -> Survey:
-
-    creator = PollfishCreator(
-        survey_name='Example Survey',
-        survey_data_fn=survey_data_fn,
-        metadata_fn=metadata_fn,
-    )
-    return creator.run()
-
-
-if __name__ == '__main__':
-
-    srv = create_survey()

@@ -1,7 +1,8 @@
 from typing import Optional
 
-from pandas import Series
+from pandas import Series, cut, qcut
 
+from survey.attributes import SingleCategoryAttribute
 from survey.attributes._abstract.respondent_attribute import RespondentAttribute
 from survey.mixins.data_mixins import NumericDataMixin
 from survey.mixins.data_types.continuous_1d_mixin import Continuous1dMixin
@@ -35,6 +36,27 @@ class PositiveMeasureAttribute(
             except ValueError:
                 data = data.astype(float)
         self.data = data
+
+    def to_single_category(
+            self, method: str, num_categories: int
+    ) -> SingleCategoryAttribute:
+        """
+        Quantize the data and convert to a SingleCategoryAttribute.
+
+        :param method: Pandas method to slice the data. One of {'cut', 'qcut'}.
+        :param num_categories: Number of categories to create.
+        """
+        if method == 'cut':
+            data = cut(self.data, num_categories)
+        elif method == 'qcut':
+            data = qcut(x=self.data, q=num_categories, duplicates='drop')
+        else:
+            raise ValueError("method must be one of {'cut', 'qcut'}")
+        return SingleCategoryAttribute(
+            name=self.name, text=self.text,
+            categories=data.cat.categories.to_list(),
+            ordered=True, data=data
+        )
 
     def __repr__(self):
 

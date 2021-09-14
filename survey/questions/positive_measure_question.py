@@ -49,7 +49,7 @@ class PositiveMeasureQuestion(
         if method == 'cut':
             data = cut(self.data, num_categories)
         elif method == 'qcut':
-            data = qcut(self.data, num_categories)
+            data = qcut(x=self.data, q=num_categories, duplicates='drop')
         else:
             raise ValueError("method must be one of {'cut', 'qcut'}")
         return SingleChoiceQuestion(

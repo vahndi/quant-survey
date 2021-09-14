@@ -19,6 +19,7 @@ setup(
         'probability',
         'seaborn',
         'scikit-learn',
+        'stringcase',
         'tqdm',
         'wordcloud'
     ],
