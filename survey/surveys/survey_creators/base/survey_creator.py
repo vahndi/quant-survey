@@ -426,5 +426,5 @@ class SurveyCreator(object):
             data=self.survey_data,
             questions=self.questions,
             respondents=self.respondents,
-            items=self.respondent_attributes
+            attributes=self.respondent_attributes
         )

@@ -41,8 +41,10 @@ class Survey(QuestionGroup, AttributeGroup, object):
     Represents a Survey.
     """
     def __init__(
-            self, name: str, data: DataFrame, questions: List[Question],
-            respondents: List[Respondent], items: List[RespondentAttribute],
+            self, name: str, data: DataFrame,
+            questions: List[Question],
+            respondents: List[Respondent],
+            attributes: List[RespondentAttribute],
             groups: Optional[Dict[str, QuestionGroup]] = None
     ):
         """
@@ -74,7 +76,7 @@ class Survey(QuestionGroup, AttributeGroup, object):
             except TypeError:
                 print(f'Warning - could not set data for {question}')
         self._respondents: List[Respondent] = respondents
-        self._attributes: List[RespondentAttribute] = items
+        self._attributes: List[RespondentAttribute] = attributes
         # add attribute properties
         for attribute in self._attributes:
             attribute.survey = self
