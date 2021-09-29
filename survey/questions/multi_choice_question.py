@@ -528,6 +528,24 @@ class MultiChoiceQuestion(
         table = table.reset_index()
         return table
 
+    def stack(self, other: 'MultiChoiceQuestion',
+              name: Optional[str] = None,
+              text: Optional[str] = None) -> 'MultiChoiceQuestion':
+
+        if self.data.index.names != other.data.index.names:
+            raise ValueError('Indexes must have the same names.')
+        if set(self.categories) != set(other.categories):
+            raise ValueError('Questions must have the same categories.')
+        new_data = concat([self.data, other.data])
+        new_question = MultiChoiceQuestion(
+            name=name or self.name, text=text or self.text,
+            categories=self.categories,
+            ordered=self._ordered,
+            data=new_data
+        )
+        new_question.survey = self.survey
+        return new_question
+
     def __gt__(self, other: 'MultiChoiceQuestion') -> Series:
 
         self_data = self.make_features(naming='{{choice}}')

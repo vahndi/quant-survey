@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Optional, Union, List
 
-from pandas import Series, cut, qcut
+from pandas import Series, cut, qcut, concat, IntervalIndex
 
 from survey.mixins.data_mixins import NumericDataMixin
 from survey.mixins.data_types.continuous_1d_mixin import Continuous1dMixin
@@ -38,18 +38,22 @@ class PositiveMeasureQuestion(
         self.data = data
 
     def to_single_choice(
-            self, method: str, num_categories: int
+            self,
+            method: str,
+            categories: Union[int, List[float], IntervalIndex]
     ) -> SingleChoiceQuestion:
         """
         Quantize the data and convert to a SingleChoiceQuestion.
 
-        :param method: Pandas method to slice the data. One of {'cut', 'qcut'}.
-        :param num_categories: Number of categories to create.
+        :param method: Pandas method to slice the data.
+                       One of {'cut', 'qcut', 'bins'}.
+        :param categories: Number of categories (for 'cut' and 'qcut'),
+                           or list of bin edges or IntervalIndex (for 'cut').
         """
         if method == 'cut':
-            data = cut(self.data, num_categories)
+            data = cut(self.data, categories)
         elif method == 'qcut':
-            data = qcut(x=self.data, q=num_categories, duplicates='drop')
+            data = qcut(x=self.data, q=categories, duplicates='drop')
         else:
             raise ValueError("method must be one of {'cut', 'qcut'}")
         return SingleChoiceQuestion(
@@ -57,6 +61,21 @@ class PositiveMeasureQuestion(
             categories=data.cat.categories.to_list(),
             ordered=True, data=data
         )
+
+    def stack(self, other: 'PositiveMeasureQuestion',
+              name: Optional[str] = None,
+              text: Optional[str] = None) -> 'PositiveMeasureQuestion':
+
+        if self.data.index.names != other.data.index.names:
+            raise ValueError('Indexes must have the same names.')
+        new_data = concat([self.data, other.data])
+        new_question = PositiveMeasureQuestion(
+            name=name or self.name,
+            text=text or self.text,
+            data=new_data
+        )
+        new_question.survey = self.survey
+        return new_question
 
     def __repr__(self):
 

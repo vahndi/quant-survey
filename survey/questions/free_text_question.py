@@ -4,7 +4,7 @@ from mpl_format.text.text_utils import wrap_text
 from nltk import RegexpTokenizer, WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.tokenize.api import TokenizerI
-from pandas import Series, DataFrame
+from pandas import Series, DataFrame, concat
 from typing import List, Optional, Set, Union
 
 from survey.mixins.data_mixins import ObjectDataMixin
@@ -140,6 +140,21 @@ class FreeTextQuestion(NamedMixin, ObjectDataMixin, TextualMixin, Question):
             ['Count', 'Word'], ascending=[False, True]
         ).reset_index()[['Word', 'Count']]
         return word_counts
+
+    def stack(self, other: 'FreeTextQuestion',
+              name: Optional[str] = None,
+              text: Optional[str] = None) -> 'FreeTextQuestion':
+
+        if self.data.index.names != other.data.index.names:
+            raise ValueError('Indexes must have the same names.')
+        new_data = concat([self.data, other.data])
+        new_question = FreeTextQuestion(
+            name=name or self.name,
+            text=text or self.text,
+            data=new_data
+        )
+        new_question.survey = self.survey
+        return new_question
 
     def __repr__(self):
 
